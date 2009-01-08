@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2001 by Sun Microsystems, Inc.
+# All rights reserved.
+#
+# ident	"@(#)local.profile	1.10	01/06/23 SMI"
+
+PATH=${PATH}:\
+/usr/X11R6/bin:\
+
+MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
+
+export PATH MANPATH
+alias ls='ls -F --color=tty'
+
+

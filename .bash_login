@@ -1,0 +1,12 @@
+#DISPLAY could be setup by ssh if client forwards X11
+#echo "enter .bash_login"
+DISPLAY=${DISPLAY:-":0.0"}
+# build $DISPLAY from login??
+#  tty | cut -d\/ -f3-
+# who | sed -e 's,.*(,,' | cut -d\) -f1
+#echo ".bash_login DISPLAY is $DISPLAY"
+if [ "`uname -s | cut -d. -f1`" != "CYGWIN_NT-5" ]; then 
+# CYGWIN on XP and 2000 will source .bashrc and then source .bash_login
+  . .bashrc
+fi
+#echo "exit .bash_login"
