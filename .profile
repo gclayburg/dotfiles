@@ -7,25 +7,19 @@
 # $DOT_HOME/.profile_hp        HP-UX systems
 
 #DOT_HOME should point to directory containing this .profile
-# $HOME will work as long as $HOME always points to the directory where this .profile resides
-# This may not be the case if the user does "sudo ksh" and then ". /path/.profile"
+# $HOME will work as long as $HOME always points to the directory where 
+# this .profile resides. This may not be the case if the user does "sudo ksh" 
+# and then ". /path/.profile"?
+
 # DOT_HOME is set in .bashrc and should be more reliable, if using this .profile from a bash shell
-#DOT_HOME=/home/gclaybur
-#DOT_HOME=$HOME
 #echo ".profile:  dot_home: $DOT_HOME"
 
 #Fall back to using $HOME if DOT_HOME is not set, i.e. when using ksh or sh
 PROFILE_HOME=${DOT_HOME:-`dirname "${HOME}/.profile"`}
 export PROFILE_HOME
 #echo ".profile: profile_home is $PROFILE_HOME"
-#case $- in
-#  *i*)
-#    stty istrip
-#    #other commands for interactive shell here
-#esac
-#echo "enter .profile "
 
-# OS common settings
+# OS/shell common settings
 PATH=/usr/bin:\
 /bin:\
 /usr/sbin:\
@@ -40,7 +34,6 @@ LD_LIBRARY_PATH=/usr/lib
 export LD_LIBRARY_PATH
 
 MANPATH=/usr/share/man
-
 PROFILE=true
 EDITOR=vi
 VISUAL=vi
@@ -129,7 +122,7 @@ FCEDIT=vi
 ENV=$HOME/.profile
 export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV
 
-# not safe for Bourne shell
+# OS agnostic settings not safe for Bourne shell
 if [ "$0" != "sh" -a "$0" != "-sh" ]; then
   set -o emacs
 
