@@ -3,7 +3,7 @@
 
 #BASH_SOURCE is a better guess as to the location of this script,
 # but will only exist if bash version >=3
-DOT_HOME=$(dirname ${BASH_SOURCE:-${HOME}/.bashrc})
+DOT_HOME=$(dirname "${BASH_SOURCE:-${HOME}/.bashrc}")
 #echo ".bashrc: DOT_HOME=$DOT_HOME"
 #echo "home is $HOME"
 
