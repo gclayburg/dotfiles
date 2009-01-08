@@ -1,10 +1,11 @@
 # Make sure ENV settings are set for each bash subshell
-#echo "home is $HOME"
 #echo "enter .bashrc "
+
 #BASH_SOURCE is a better guess as to the location of this script,
 # but will only exist if bash version >=3
 DOT_HOME=$(dirname ${BASH_SOURCE:-${HOME}/.bashrc})
 #echo ".bashrc: DOT_HOME=$DOT_HOME"
+#echo "home is $HOME"
 
 if [ -r "${DOT_HOME}/.profile" ]; then
   . "${DOT_HOME}/.profile"
