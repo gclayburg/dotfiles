@@ -55,10 +55,10 @@ if [ "$PS1" ]; then
 
 # This first part of prompt will be shown in red for the root user, 
 # green otherwise.
-# Computing the color within the prompt slows down prompt rendering, but it allows the user to su to root and get a valid colored prompt without needing to re-source .bashrc 
+# Computing the root user color within the prompt slows down prompt rendering, but it allows the user to su to root and get a valid colored prompt without needing to re-source .bashrc 
   base_prompt='\n\e[$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
   case "$TERM" in
-    xterm*|dtterm*)
+    xterm*|dtterm*|terminator)
       PS1=${xterm_titlebar}${base_prompt}
       ;;
     *)

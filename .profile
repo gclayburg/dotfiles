@@ -38,6 +38,7 @@ PROFILE=true
 EDITOR=vi
 VISUAL=vi
 PAGER=less
+LANG=C
 
 include (){
   if [ -r "$1" ]; then
@@ -73,6 +74,7 @@ case "`uname -s | cut -d_ -f1`" in
 esac
 
 # Setup PS1 (prompt) for sh and ksh.
+# This prompt also works for a basic, boring bash prompt 
 # bash settings are overridden in .bashrc
 
 USER=`whoami` 
@@ -87,10 +89,10 @@ case "$USER" in
 esac
 
 case "$0" in
-  ksh)
-    #echo "TERM is $TERM"
+  ksh|*bash*)
+#    echo "TERM is $TERM"
     case $TERM in
-      xterm*|dtterm*)
+      xterm*|dtterm*|terminator)
         PS1=']0;${USER}@${HOSTNAME}:${PWD}
 \! [${USER}@${HOSTNAME}:${PWD}]
 ${CHAR} '
@@ -108,19 +110,20 @@ ${CHAR} '
     esac
     ;;
   sh)
-    PS1="
-[ ${USER}@${HOSTNAME}:${PWD}]
-sh ${CHAR} "
+    PS1="[${USER}@${HOSTNAME}] ${CHAR} "
+    ;;
+  *)
+    PS1="unknown$ "
     ;;
 esac #case "$0"
-
+#echo "profile PS1: $PS1"
 
 #Customized history settings
 HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
 HISTSIZE=1000
 FCEDIT=vi
 ENV=$HOME/.profile
-export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV
+export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV LANG
 
 # OS agnostic settings not safe for Bourne shell
 if [ "$0" != "sh" -a "$0" != "-sh" ]; then
