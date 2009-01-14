@@ -15,6 +15,12 @@
 #echo ".profile:  dot_home: $DOT_HOME"
 
 #Fall back to using $HOME if DOT_HOME is not set, i.e. when using ksh or sh
+#  $HOME will not always work to locate the os specific .profile files, such as
+#  when you "su - root" on Solaris and then ". /export/home/username/.profile under ksh or sh
+#  In this case, $HOME is reset to / and this script will not find the OS specific files.
+#  The solution is to always do "su root" or just "su" and then ". /export/home/username/.profile"
+#  if you really want to use sh or ksh.
+
 PROFILE_HOME=${DOT_HOME:-`dirname "${HOME}/.profile"`}
 export PROFILE_HOME
 #echo ".profile: profile_home is $PROFILE_HOME"
@@ -78,6 +84,9 @@ esac
 # bash settings are overridden in .bashrc
 
 USER=`whoami` 
+#if ( "$?" -ne "0" ) then
+#  USER=`/usr/ucb/whoami`
+#fi
 HOSTNAME=`uname -n`
 case "$USER" in
   root)
@@ -92,7 +101,7 @@ case "$0" in
   ksh|*bash*)
 #    echo "TERM is $TERM"
     case $TERM in
-      xterm*|dtterm*|terminator)
+      xterm*|dtterm*|terminator|rxvt*)
         PS1=']0;${USER}@${HOSTNAME}:${PWD}
 \! [${USER}@${HOSTNAME}:${PWD}]
 ${CHAR} '
@@ -113,7 +122,7 @@ ${CHAR} '
     PS1="[${USER}@${HOSTNAME}] ${CHAR} "
     ;;
   *)
-    PS1="unknown$ "
+    PS1="unknown shell$ "
     ;;
 esac #case "$0"
 #echo "profile PS1: $PS1"
@@ -125,7 +134,7 @@ FCEDIT=vi
 ENV=$HOME/.profile
 export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV LANG
 
-# OS agnostic settings not safe for Bourne shell
+# OS agnostic settings not always safe for Bourne shell
 if [ "$0" != "sh" -a "$0" != "-sh" ]; then
   set -o emacs
 

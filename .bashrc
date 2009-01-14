@@ -9,11 +9,16 @@ DOT_HOME=$(dirname "${BASH_SOURCE:-${HOME}/.bashrc}")
 
 if [ -r "${DOT_HOME}/.profile" ]; then
 #Make sure we include sh/ksh/bash common settings, even when sourcing this .bashrc from a different user
+#We also get platform specific settings and overrides, i.e. isRoot()
   . "${DOT_HOME}/.profile"
 fi
 
 xt(){
   xterm -r -sb -j -sk -si -sl 10000 -geom 120x80 $@ &
+}
+
+setWindowTitle() {
+  echo -ne "\e]0;$*\a"
 }
 
 #are we an interactive shell?
@@ -55,10 +60,48 @@ if [ "$PS1" ]; then
 
 # This first part of prompt will be shown in red for the root user, 
 # green otherwise.
-# Computing the root user color within the prompt slows down prompt rendering, but it allows the user to su to root and get a valid colored prompt without needing to re-source .bashrc 
-  base_prompt='\n\e[$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+# Computing the root user color within the prompt slows down prompt rendering, 
+#   but it allows the user to su to root and get a valid colored prompt without needing to re-source .bashrc 
+  
+# regular colors
+  K="\[\033[0;30m\]"    # black
+  R="\[\033[0;31m\]"    # red
+  G="\[\033[0;32m\]"    # green
+  Y="\[\033[0;33m\]"    # yellow
+  B="\[\033[0;34m\]"    # blue
+  M="\[\033[0;35m\]"    # magenta
+  C="\[\033[0;36m\]"    # cyan
+  W="\[\033[0;37m\]"    # white
+  OFF="\[\033[0m\]"
+
+userC(){
+  echo "$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}")   ==0) ? 31 : 32))"
+}
+
+idcutC(){
+  echo "$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))"  
+}
+iduC(){
+  echo "$(( ($(id -u)==0) ? 31 : 32))"
+}
+# if the -u option exists, id -u allows faster prompt rendering, esp on Cygwin
+  id -u > /dev/null 2>&1
+  if [ "$?" -eq "0" ]; then  
+     #base_prompt='\n\e[$(( ($(id -u)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+     base_prompt='\n\e[$(iduC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+  else
+    #base_prompt='\n\e[$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+    #base_prompt='\n\e[$(idcutC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+
+
+#faster
+    #base_prompt='\n\e[$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}")   ==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+    base_prompt='\n\e[$(userC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+  fi
+
+# Does our terminal know how to handle setting the title bar?
   case "$TERM" in
-    xterm*|dtterm*|terminator)
+    xterm*|dtterm*|terminator|rxvt*)
       PS1=${xterm_titlebar}${base_prompt}
       ;;
     *)
