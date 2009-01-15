@@ -74,31 +74,20 @@ if [ "$PS1" ]; then
   W="\[\033[0;37m\]"    # white
   OFF="\[\033[0m\]"
 
-userC(){
-  echo "$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}")   ==0) ? 31 : 32))"
-}
-
-idcutC(){
-  echo "$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))"  
-}
-iduC(){
-  echo "$(( ($(id -u)==0) ? 31 : 32))"
-}
 # if the -u option exists, id -u allows faster prompt rendering, esp on Cygwin
-  id -u > /dev/null 2>&1
-  if [ "$?" -eq "0" ]; then  
-     #base_prompt='\n\e[$(( ($(id -u)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-     base_prompt='\n\e[$(iduC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-  else
-    #base_prompt='\n\e[$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-    #base_prompt='\n\e[$(idcutC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-
-
-#faster
-    #base_prompt='\n\e[$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}")   ==0) ? 31 : 32))m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-    base_prompt='\n\e[$(userC)m\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
-  fi
-
+#  id -u > /dev/null 2>&1
+#  if [ "$?" -eq "0" ]; then  
+#    myColor='$(( ($(id -u)==0) ? 31 : 32))'
+#    myColor='$((  ($EUID==0) ? 31 : 32))'
+#  else
+#    myColor='$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))'
+#    myColor='$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}") ==0) ? 31 : 32))'
+#    myColor='$((  ($EUID==0) ? 31 : 32))'
+#  fi
+    myColor='$((  ($EUID==0) ? 31 : 32))'
+    userColorPrompt="\n\e[${myColor}m"
+    base_prompt='\# \j [\d \t] ${DISPLAY} \u@\e[${COLOR}m\h \e[0;33m${DIRSTACK[0]}\e[0m \e[34m${DIRSTACK[@]:1}\e[0m\n\$ '
+    base_prompt=${userColorPrompt}${base_prompt}
 # Does our terminal know how to handle setting the title bar?
   case "$TERM" in
     xterm*|dtterm*|terminator|rxvt*)
