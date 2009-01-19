@@ -1,22 +1,92 @@
 # Make sure ENV settings are set for each bash subshell
 #echo "enter .bashrc "
 
-#BASH_SOURCE is a better guess as to the location of this script,
-# but will only exist if bash version >=3
-DOT_HOME=$(dirname "${BASH_SOURCE:-${HOME}/.bashrc}")
-#echo ".bashrc: DOT_HOME=$DOT_HOME"
-#echo "home is $HOME"
+# OS/shell common settings
+PATH=/usr/bin:\
+/bin:\
+/usr/sbin:\
+/sbin:\
+/etc:\
+/usr/local/bin:\
+$HOME/bin:\
+.:\
+$PATH
 
-if [ -r "${DOT_HOME}/.profile" ]; then
-#Make sure we include sh/ksh/bash common settings, even when sourcing this .bashrc from a different user
-#We also get platform specific settings and overrides, i.e. isRoot()
-  . "${DOT_HOME}/.profile"
-fi
+LD_LIBRARY_PATH=/usr/lib
+export LD_LIBRARY_PATH
 
-xt(){
-  xterm -r -sb -j -sk -si -sl 10000 -geom 120x80 $@ &
-}
+MANPATH=/usr/share/man
+PROFILE=true
+EDITOR=vi
+VISUAL=vi
+PAGER=less
+LANG=C
 
+case "`uname -s | cut -d_ -f1`" in
+  Linux)
+    PATH=${PATH}:\
+/usr/X11R6/bin/
+    MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
+    export PATH MANPATH
+    alias ls='ls -F --color=tty'
+    ;;
+  SunOS)
+    PATH=${PATH}:\
+/usr/ucb:\
+/etc:\
+/usr/openwin/bin:\
+/usr/dt/bin:\
+/usr/ccs/bin:\
+/usr/ucb/bin:\
+/usr/local/sbin
+    
+    ###########################
+    if [ ! "${DT}" ] ; then  #what the?
+            #stty erase 
+            TTY=`tty | sed -e 's,.*/,,'`
+    fi
+    
+    MANPATH=${MANPATH}:/usr/share/man:/usr/openwin/man:/usr/dt/share/man:/usr/local/man
+    export PATH MANPATH
+    JAVA_HOME=/usr/java1.2
+    export JAVA_HOME
+    alias more=/usr/xpg4/bin/more
+    
+    #################################################################
+    # JWhich CLASSPATH
+    CLASSPATH=$CLASSPATH:~/classes
+    export CLASSPATH
+    ;;
+  CYGWIN) #Win XP, 2000, NT, Vista?
+    #Windows XP/Cygwin reports $0 as "-sh" when invoking !ls from ftp server 
+    if [ $0 != "sh" -a $0 != "-sh" ]; then
+      alias more=less
+      alias mroe=less
+    fi
+    #echo "exit .profile_winxp"
+    ;;
+  HP-UX) 
+    # enter HP-UX specific .profile settings here
+    ;;
+  AIX)  #AIX
+    #####################
+    # ibm apache web server
+    PATH=${PATH}:/opt/ibmhttpd/bin
+    ;;
+  *)
+    ;;
+esac
+
+HISTSIZE=1000
+FCEDIT=vi
+ENV=$HOME/.profile
+export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV LANG
+set -o emacs
+
+#stupid finger patch
+alias mroe=more
+alias gerp=grep
+alias grpe=grep
 
 #are we an interactive shell?
 if [ "$PS1" ]; then
@@ -25,6 +95,9 @@ if [ "$PS1" ]; then
   #  echo -ne "\e]0;$*\a"
   #}
 
+  xt(){
+    xterm -r -sb -j -sk -si -sl 10000 -geom 120x80 $@ &
+  }
   setPrompt(){
     # regular colors
     local       K="\[\033[0;30m\]"    # black
@@ -116,6 +189,6 @@ if [ "$PS1" ]; then
     export PS1
   }
   setPrompt
-  unset setPrompt
+  unset -f setPrompt
 fi 
 #echo "exit .bashrc"
