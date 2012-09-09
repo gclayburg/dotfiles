@@ -39,13 +39,6 @@ $PATH
 LD_LIBRARY_PATH=/usr/lib
 export LD_LIBRARY_PATH
 
-MANPATH=/usr/share/man
-PROFILE=true
-EDITOR=vi
-VISUAL=vi
-PAGER=less
-LANG=C
-
 include (){
   if [ -r "$1" ]; then
     . "$1"
@@ -58,6 +51,7 @@ case "`uname -s | cut -d_ -f1`" in
   Linux)
     include "${PROFILE_HOME}/.profile_linux"
     include "${PROFILE_HOME}/.profile_linux_${MY_HOST}"
+    PATH=/opt/ibm/ldap/V6.2/bin/32:${PATH}
     ;;
   SunOS)
     include "${PROFILE_HOME}/.profile_solaris"
@@ -72,6 +66,29 @@ case "`uname -s | cut -d_ -f1`" in
     include "${PROFILE_HOME}/.profile_hp_${MY_HOST}"
     ;;
   AIX)  #AIX
+    PATH=${PATH}:/opt/freeware/bin
+    PATH=/opt/IBM/ldap/V6.1/bin:/opt/IBM/ldap/V6.1/sbin:${PATH}
+    export JAVA_HOME=/usr/java14
+    if [ -d /usr/java6_64 ]; then
+      export JAVA_HOME=/usr/java6_64
+    elif [ -d /usr/java5 ]; then
+      export JAVA_HOME=/usr/java5
+    elif [ -d /opt/IBM/ldap/V6.1/java ]; then
+      export JAVA_HOME=/opt/IBM/ldap/V6.1/java
+    elif [ -d /usr/java14 ]; then
+      export JAVA_HOME=/usr/java14
+    fi
+    PATH=${JAVA_HOME}/bin:${PATH}
+
+    if [ -d /tomcat/apache-ant-1.7.0 ]; then
+      export ANT_HOME=/tomcat/apache-ant-1.7.0
+    elif [ -d /opt/apache-ant-1.7.1 ]; then
+      export ANT_HOME=/opt/apache-ant-1.7.1
+    fi
+    PATH=${PATH}:${ANT_HOME}/bin
+    CATALINA_HOME=
+
+    ulimit -d unlimited
     include "${PROFILE_HOME}/.profile_aix"
     include "${PROFILE_HOME}/.profile_aix_${MY_HOST}"
     ;;
@@ -79,16 +96,23 @@ case "`uname -s | cut -d_ -f1`" in
     ;;
 esac
 
+MANPATH=$MANPATH:/usr/local/man:/usr/local/man/man1:/usr/local/man/man3:/usr/local/man/man5:/usr/local/man/man8:/usr/share/man
+
+PROFILE=true
+EDITOR=vi
+VISUAL=vi
+LANG=C
+
 # Setup PS1 (prompt) for sh and ksh.
 # This prompt also works for a basic, boring bash prompt 
 # bash settings are overridden in .bashrc
 
-USER=`whoami` 
+export MY_USER=`whoami`
 #if ( "$?" -ne "0" ) then
 #  USER=`/usr/ucb/whoami`
 #fi
 HOSTNAME=`uname -n`
-case "$USER" in
+case "$MY_USER" in
   root)
     CHAR="#"
     ;;
@@ -97,42 +121,73 @@ case "$USER" in
     ;;
 esac
 
-case "$0" in
-  ksh|*bash*)
+bash_ksh_prompt(){
 #    echo "TERM is $TERM"
     case $TERM in
       xterm*|dtterm*|terminator|rxvt*)
-        PS1=']0;${USER}@${HOSTNAME}:${PWD}
-\! [${USER}@${HOSTNAME}:${PWD}]
-${CHAR} '
+        PS1=']0;${MY_USER:-%}@${HOSTNAME}:${PWD}
+\! [${MY_USER:-%}@${HOSTNAME}:${PWD}]
+${CHAR:-%} '
         ;;
       sun-cmd*)
-        PS1=']l ${USER}@${HOSTNAME}:${PWD}\\
-[${USER}@${HOSTNAME}:${PWD}]
-\! ${CHAR} '
+        PS1=']l ${MY_USER:-%}@${HOSTNAME}:${PWD}\\
+[${MY_USER:-%}@${HOSTNAME}:${PWD}]
+\! ${CHAR-%} '
         ;;
       *)
         PS1='
-[ ${USER}@${HOSTNAME}:${PWD}]
-\! ${CHAR} '
+[ ${MY_USER:-%}@${HOSTNAME}:${PWD}]
+\! ${CHAR:-%} '
         ;;
     esac
+}
+
+case "$0" in
+  *ksh*)
+    #only set PAGER to less if less is installed
+    whence less > /dev/null 2>&1
+    [ "$?" == "0" ] && PAGER=less || alias less=more
+    bash_ksh_prompt
+    ;;
+  *bash*)
+    type less > /dev/null 2>&1
+    [ "$?" == "0" ] && PAGER=less || alias less=more
+    bash_ksh_prompt
     ;;
   sh)
-    PS1="[${USER}@${HOSTNAME}] ${CHAR} "
+    #blindly assume other shells have less installed
+    PAGER=less
+    #man will fail on AIX/ksh if ENV is set
+    ENV=$HOME/.profile
+
+    PS1="[${MY_USER:-?}@${HOSTNAME}] ${CHAR:-?} "
     ;;
   *)
+    #blindly assume other shells have less installed
+    PAGER=less
+    #man will fail on AIX/ksh if ENV is set
+    ENV=$HOME/.profile
     PS1="unknown shell$ "
     ;;
 esac #case "$0"
 #echo "profile PS1: $PS1"
 
 #Customized history settings
+TTY=`tty | sed -e 's,.*/,,'`
 HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
 HISTSIZE=1000
 FCEDIT=vi
-ENV=$HOME/.profile
+
 export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV LANG
+
+
+if [ -t 0 ]; then #we have tty, do interactive settings
+  TT=$(tty | cut -d\/ -f3-)
+  IP=$(who | grep $TT | sed -e 's,.*(,,' | cut -d\) -f1)
+  #echo "IP: $IP"
+  export DISPLAY=${DISPLAY:-"${IP}:0.0"}
+  #echo "DISPLAY: $DISPLAY"
+fi
 
 # OS agnostic settings not always safe for Bourne shell
 if [ "$0" != "sh" -a "$0" != "-sh" ]; then
