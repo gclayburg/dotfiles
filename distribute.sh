@@ -46,7 +46,16 @@ doOne(){
 
 installID(){
   echo "installid: $1"
-  cat ~/.ssh/id_dsa.pub | ssh "$1" -l "$2" "mkdir .ssh; chmod 700 .ssh; cat >> .ssh/authorized_keys"
+  if [ -r "$HOME/.ssh/id_rsa.pub" ]; then
+    PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
+  elif [ -r "$HOME/.ssh/id_dsa.pub" ]; then
+    PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
+  else
+    echo "No ssh key found."
+    exit 1
+  fi
+  cat "$PUBLIC_KEY" | ssh "$1" "mkdir .ssh; chmod 700 .ssh; cat >> .ssh/authorized_keys"
+  #cat "$HOME/.ssh/id_dsa.pub" | ssh "$1" "mkdir .ssh; chmod 700 .ssh; cat >> .ssh/authorized_keys"
   status=$?
   if [ "$status" != "0" ]; then 
     exit "$?"
@@ -62,7 +71,9 @@ usage(){
   echo " ex 1: copy dotfiles to sy00084 under the gclaybur directory in the rbeatty account" 
   echo "       $0 rbeatty@sy00084:gclaybur/"    
   echo " ex 2: copy dotfiles and install ssh public key for gclaybur account on sy02001"
-  echo "       $0 -id sy02001"
+  echo "       $0 -id gclaybur@sy02001 "
+  echo " ex 3: copy dotfiles and install ssh public key for default account (id) on sy02001"
+  echo "       $0 -id sy02001 "
   echo " ex 3: copy dotfiles to gclaybur account on sy02001"
   echo "       $0 sy02001"
   exit 1
@@ -80,11 +91,11 @@ elif [ "$#" -eq "1"  ]; then
       doOne "$1"
       ;;
   esac
-elif [ "$#" -eq "3" ]; then
+elif [ "$#" -eq "2" ]; then
   case "$1" in
     -id)
       shift
-      installID "$1" "$2"
+      installID "$1"
       doOne "$1"
       ./changepass.ex "$1"
       ;;

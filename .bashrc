@@ -53,6 +53,10 @@ ${PATH}:\
       export PATH=$PATH:$ORACLE_HOME/bin
       export ORACLE_SID=XE
     fi
+  # make less more friendly for non-text input files
+  [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+
     ;;
   SunOS)
     PATH=${PATH}:\
@@ -243,8 +247,7 @@ setDirColors
 unset -f setDirColors
 
 
-HISTSIZE=1000
-FCEDIT=vi
+
 #6/3/2011 - if ENV is uncommented, some AIX systems will display man pages with short column widths when this .bashrc is sourced from another user such as wicaadm
 #ENV=$HOME/.profile
 
@@ -258,6 +261,14 @@ alias grpe=grep
 
 #are we an interactive shell?
 if [ "$PS1" ]; then
+  # number of commands to remember in the command history
+  HISTSIZE=1000
+  # The maximum number of commands to remember in the history file
+  HISTFILESIZE=5000
+
+  FCEDIT=vi
+
+
   #allow bash to resize screen area when terminal window size changes
   shopt -s checkwinsize
   #allow C-s (forward search to work in shell)

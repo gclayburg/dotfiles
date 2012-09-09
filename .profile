@@ -154,7 +154,7 @@ case "$0" in
     [ "$?" == "0" ] && PAGER=less || alias less=more
     bash_ksh_prompt
     ;;
-  sh)
+  *sh*)
     #blindly assume other shells have less installed
     PAGER=less
     #man will fail on AIX/ksh if ENV is set
