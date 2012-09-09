@@ -28,26 +28,30 @@ VISUAL=vi
 PAGER=less
 LANG=C
 
-include (){
-  if [ -r "$1" ]; then
-    . "$1"
-  fi
-}
+#include (){
+#  if [ -r "$1" ]; then
+#    . "$1" fi
+#}
 
 
 case "`uname -s | cut -d_ -f1`" in
   Linux)
-    PATH=${PATH}:\
-/opt/ibm/ldap/V6.2/bin/32:\
-/usr/X11R6/bin/:\
-/opt/java/bin
     MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
     export PATH MANPATH
-    JAVA_HOME=/opt/java/
+    JAVA_HOME=/usr/java/latest/
     export JAVA_HOME
+    PATH=${JAVA_HOME}/bin:\
+${PATH}:\
+/usr/X11R6/bin/
     alias ls='ls -F --color=tty'
     if [ -r /usr/bin/firefox ]; then
       export BROWSER=/usr/bin/firefox
+    fi
+    #oracle XE
+    if [ -d /usr/lib/oracle/xe/app/oracle/product/10.2.0/server ]; then
+      export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
+      export PATH=$PATH:$ORACLE_HOME/bin
+      export ORACLE_SID=XE
     fi
     ;;
   SunOS)
@@ -83,13 +87,14 @@ case "`uname -s | cut -d_ -f1`" in
       alias more=less
       alias mroe=less
     fi
+# 11/3/2011 who commnad does not work on cygwin running on windows 7? - it returns no output
+    if [ $(who -m | wc -l ) -gt 0 ]; then
     LOGINFROM=$(who -m | sed 's/.*(\(.*\))/\1/g')
-# 11/3/2011 who commnad does not work on cygwin running on vostro 3555?
+    else
+      LOGINFROM=":0"
+    fi
 
-    if [ "$LOGINFROM" = ":0" ]; then
-#Cygin update on 9/12/2010 now reports my uid as 0 the for the first shell opened, all next shells are id 1007
-      #export myid="`id | cut -d= -f2 | cut -d\( -f1`"
-      #if [ "$myid" -ne "400" -a "$myid" -ne "0" ]; then
+    if [ "$LOGINFROM" = ":0" ]; then  #skip somewhat slow ssh-agent check if we are not logged onto the console
         export SSH_AUTH_SOCK=/tmp/.ssh-socket-gary
         ssh-add -l #2>&1 > /dev/null
         mystatus=$?
@@ -105,12 +110,10 @@ case "`uname -s | cut -d_ -f1`" in
           echo "started agent"
           ssh-add
         fi
-      #else
-        # for some reason, cygwin will give me a uid of 0 for the first rxvt/bash window opened.  all others will be uid=1007
-        #   ssh-agent must be running as the same uid as all the shells that will need to use ssh-agent based authentication
-      #  echo "id=400.  no ssh for you.  come back 1 year."
-      #fi
     fi
+    case "`uname -n`" in
+      DellE1705GaryC)
+
 #export JAVA_HOME=/c/j2sdk1.4.1
 #export JAVA_HOME="/c/Program Files/Java/jdk1.5.0"
 #export JAVA_HOME="/c/Program Files/Java/jdk1.6.0"
@@ -129,7 +132,7 @@ MANPATH=${MANPATH}:/usr/man:/usr/ssl/man:/usr/X/man
 export MANPATH
 
 PATH=${ANT_HOME}/bin:$PATH
-PATH=$(cygpath --unix "${JAVA_HOME}/bin"):$PATH
+#        PATH=$(cygpath --unix "${JAVA_HOME}/bin"):$PATH
 PATH="/c/Gary/bin:$PATH"
 export DISPLAY=localhost:0
 
@@ -162,8 +165,19 @@ PATH="${PATH}:/c/api/WebTest-canoo/bin"
 ########################
 # WinMerge
 PATH="${PATH}:/c/Program Files/WinMerge"
-
-
+        ;;
+      MININT-VCQU7PL)
+        #export JAVA_HOME='c:\Program Files\Java\jdk1.6.0_30\'
+        export JAVA_HOME='c:\Program Files\Java\jdk1.7.0_01'
+        export ANT_HOME=/c/api/apache-ant-1.8.2
+        PATH=${ANT_HOME}/bin:$PATH
+        M2_HOME=/c/api/apache-maven-3.0.3/
+        M2=${M2_HOME}/bin
+        #MAVEN_OPTS= -Xms256m -Xmx512m
+        PATH="${M2}:${PATH}"
+        ;;
+    esac
+    PATH=$(cygpath --unix "${JAVA_HOME}/bin"):$PATH
     ;;
   HP-UX) 
     # enter HP-UX specific .profile settings here
