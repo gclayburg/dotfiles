@@ -2,6 +2,10 @@
 #set -x
 #echo "enter .bashrc "
 
+RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
+UNQUALIFIED_HOSTNAME=$(echo $HOSTNAME | cut -d. -f1)
+#echo "RUNDIR: $RUNDIR"
+#echo "bash source: $BASH_SOURCE"
 # Source global definitions
 if [ -f /etc/bashrc ]; then
         . /etc/bashrc
@@ -36,9 +40,12 @@ LANG=C
 
 case "`uname -s | cut -d_ -f1`" in
   Linux)
+    if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
+      source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
+    fi
     MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
     export PATH MANPATH
-    JAVA_HOME=/usr/java/latest/
+    JAVA_HOME=${JAVA_HOME:-/usr/java/latest/}
     export JAVA_HOME
     PATH=${JAVA_HOME}/bin:\
 ${PATH}:\
@@ -251,28 +258,51 @@ unset -f setDirColors
 #6/3/2011 - if ENV is uncommented, some AIX systems will display man pages with short column widths when this .bashrc is sourced from another user such as wicaadm
 #ENV=$HOME/.profile
 
-export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH PS1 HISTFILE HISTSIZE ENV LANG
-set -o emacs
-
-#stupid finger patch
-alias mroe=more
-alias gerp=grep
-alias grpe=grep
-
+export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH HISTFILE HISTSIZE ENV LANG
 #are we an interactive shell?
 if [ "$PS1" ]; then
+  set -o emacs
+
+  #stupid finger patch
+  alias mroe=more
+  alias gerp=grep
+  alias grpe=grep
+  alias duf='du -sk * | sort -nr | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'''
+
+
   # number of commands to remember in the command history
-  HISTSIZE=1000
+  HISTSIZE=10000
   # The maximum number of commands to remember in the history file
-  HISTFILESIZE=5000
+  HISTFILESIZE=50000
 
   FCEDIT=vi
 
 
   #allow bash to resize screen area when terminal window size changes
   shopt -s checkwinsize
+
   #allow C-s (forward search to work in shell)
   stty stop undef
+
+
+#------------------------------------------------------------------------------------------
+# INCREMENTAL HISTORY SEARCH
+# "Add this to your .bashrc and you will be very happy" by Jeet
+#------------------------------------------------------------------------------------------
+
+## Up Arrow: search and complete from previous history
+# bind '"\eOA": history-search-backward'
+## alternate, if the above does not work for you:
+bind '"\e[A":history-search-backward'
+bind '"\C-p":history-search-backward'
+
+## Down Arrow: search and complete from next history
+# bind '"\eOB": history-search-forward'
+## alternate, if the above does not work for you:
+bind '"\e[B":history-search-forward'
+bind '"\C-n":history-search-forward'
+
+
   #setWindowTitle() {
   #  echo -ne "\e]0;$*\a"
   #}
@@ -370,7 +400,10 @@ if [ "$PS1" ]; then
         PS1=${base_prompt}
         ;;
     esac
-    export PS1
+
+    #exporting this PS1 confuses dash - it goes into an infinite loop when dash is invoked
+    #   from a bash shell, i.e. on ubuntu systems  /bin/sh -> dash
+    #export PS1
   }
   setPrompt
   unset -f setPrompt

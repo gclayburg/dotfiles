@@ -16,20 +16,23 @@ go(){
 
 doAll(){
   go cp .bash* .prof* .dir_colors ~
-  go tar -cvf dotfiles2009.tar .prof* .bash* .terminfo .dir_colors tmp
+  go tar -cvf dotfiles2009.tar .prof* .bash*  .dir_colors
   go scp -P 21 dotfiles2009.tar ogre:
-  go scp -r -P 21 .bash* .prof* .terminfo .dir_colors ogre:
-  go scp -r .bash* .prof* .terminfo .dir_colors jugglingfarmer:
-  go scp -r .bash* .prof* .terminfo .dir_colors grunt:
-  go scp -r .bash* .prof* .terminfo .dir_colors packers:
-  go scp -r .bash* .prof* .terminfo .dir_colors vikings:
+  go scp -r -P 21 .bash* .prof*  .dir_colors ogre:
+  go scp -r .bash* .prof* .dir_colors jugglingfarmer:
+  go scp -r .bash* .prof* .dir_colors grunt:
+  go scp -r .bash* .prof* .dir_colors packers:
+  go scp -r .bash* .prof* .dir_colors vikings:
 }
 
 doOne(){
-  go tar -cvf dotfiles2009.tar .prof* .bash* .terminfo .dir_colors tmp .inputrc
-  if [  "$1" == "ogre" ]; then
-    go scp -P 21 -r .bash* .prof* .terminfo .dir_colors tmp .inputrc "$1":
-  else
+  go tar -cvf dotfiles2009.tar .prof* .bash* .dir_colors .inputrc
+  BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
+#  if [  "$1" == "ogre" ]; then
+#    go ssh $1 "mkdir $BACKUPDIR"
+#    go ssh $1 "cp .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
+#    go scp -P 21 -r .bash* .prof* .dir_colors .inputrc "$1":
+#  else
     echo "$1" | grep : > /dev/null
     if [ "$?" == "0" ]; then # assume $1 is of the form: rbeatty@jaxaf2661:gclaybur/
       USER_DIR="$1"
@@ -39,9 +42,13 @@ doOne(){
     else  #append : to specify home directory of user on remote host
       USER_DIR="$1":
     fi
-    go scp -rp bin .bash* .prof* .terminfo .dir_colors tmp .inputrc "${USER_DIR}"
+    #backup any previous dotfiles
+    go ssh $1 "mkdir $BACKUPDIR"
+    go ssh $1 "cp .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
+    go    scp -rp .bash* .prof* .dir_colors .inputrc "${USER_DIR}"
+
 #    go ssh "$1" chmod 644 .profile
-  fi
+#  fi
 }
 
 installID(){
