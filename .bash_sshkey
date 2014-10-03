@@ -1,5 +1,5 @@
 #!/bin/bash
-usage(){
+installidusage(){
 echo "usage: installid [user@]hostname"
 echo "usage examples:"
 echo
@@ -22,7 +22,7 @@ installid(){
 
   status=$?
   if [[ "$status" != "0" ]]; then
-    usage
+    installidusage
   else
     ASSIMILATED_HOSTS="$HOME/.ssh/assimilated_hosts"
     if [[ ! (-f ${ASSIMILATED_HOSTS}) ]]; then

@@ -14,17 +14,6 @@ go(){
   eval $*
 }
 
-doAll(){
-  go cp .bash* .prof* .dir_colors ~
-  go tar -cvf dotfiles2009.tar .prof* .bash*  .dir_colors
-  go scp -P 21 dotfiles2009.tar ogre:
-  go scp -r -P 21 .bash* .prof*  .dir_colors ogre:
-  go scp -r .bash* .prof* .dir_colors jugglingfarmer:
-  go scp -r .bash* .prof* .dir_colors grunt:
-  go scp -r .bash* .prof* .dir_colors packers:
-  go scp -r .bash* .prof* .dir_colors vikings:
-}
-
 doOne(){
   go tar -cvf dotfiles2009.tar .prof* .bash* .dir_colors .inputrc
   BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
@@ -51,26 +40,6 @@ doOne(){
 #  fi
 }
 
-installID(){
-  echo "installid: $1"
-  if [ -r "$HOME/.ssh/id_rsa.pub" ]; then
-    PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
-  elif [ -r "$HOME/.ssh/id_dsa.pub" ]; then
-    PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
-  else
-    echo "No ssh key found."
-    exit 1
-  fi
-  cat "$PUBLIC_KEY" | ssh "$1" "mkdir .ssh; chmod 700 .ssh; cat >> .ssh/authorized_keys"
-  #cat "$HOME/.ssh/id_dsa.pub" | ssh "$1" "mkdir .ssh; chmod 700 .ssh; cat >> .ssh/authorized_keys"
-  status=$?
-  if [ "$status" != "0" ]; then 
-    exit "$?"
-  fi
-  echo "sshkeys status: $status"
-
-}
-
 usage(){
   echo "$0: must specify an option:"
   echo "  -a  distribute to all known hosts"
@@ -86,6 +55,7 @@ usage(){
   exit 1
 }
 
+. ./.bash_sshkey
 echo "num: $#"
 if [ "$1" = "-?" -o "$1" = "-h" ]; then
   usage
@@ -102,7 +72,8 @@ elif [ "$#" -eq "2" ]; then
   case "$1" in
     -id)
       shift
-      installID "$1"
+      installid "$1"
+      echo "done installid"
       doOne "$1"
       ./changepass.ex "$1"
       ;;
