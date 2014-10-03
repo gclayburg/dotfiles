@@ -1,0 +1,35 @@
+#!/bin/bash
+usage(){
+echo "usage: installid [user@]hostname"
+echo "usage examples:"
+echo
+echo "install my public key into the gclaybur user on host ogre:"
+echo "  installid gclaybur@ogre"
+echo
+echo "install my public key into the $USER user on host evans.example.com:"
+echo "  installid evans.example.com"
+}
+
+installid(){
+  if [[ -r "$HOME/.ssh/id_rsa.pub" ]]; then
+    PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
+  elif [[ -r "$HOME/.ssh/id_dsa.pub" ]]; then
+    PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
+  else
+    echo "No ssh key found. Please use ssh-keygen manually to generate public/private keypair"
+  fi
+  cat "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
+
+  status=$?
+  if [[ "$status" != "0" ]]; then
+    usage
+  else
+    ASSIMILATED_HOSTS="$HOME/.ssh/assimilated_hosts"
+    if [[ ! (-f ${ASSIMILATED_HOSTS}) ]]; then
+      echo "# This is a generated list of known places where this user can login with public key\n" >> ${ASSIMILATED_HOSTS}
+    fi
+    echo "$1" >> ${ASSIMILATED_HOSTS};
+#    echo "assimilated $1"
+  fi
+
+}
