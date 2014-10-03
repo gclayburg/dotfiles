@@ -40,9 +40,6 @@ LANG=C
 
 case "`uname -s | cut -d_ -f1`" in
   Linux)
-    if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
-      source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
-    fi
     MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
     export PATH MANPATH
     JAVA_HOME=${JAVA_HOME:-/usr/java/latest/}
@@ -98,14 +95,14 @@ ${PATH}:\
       alias more=less
       alias mroe=less
     fi
-# 11/3/2011 who commnad does not work on cygwin running on windows 7? - it returns no output
+# 11/3/2011 who command does not work on cygwin running on windows 7? - it returns no output
     if [ $(who -m | wc -l ) -gt 0 ]; then
-    LOGINFROM=$(who -m | sed 's/.*(\(.*\))/\1/g')
+      LOGINFROM=$(who -m | sed 's/.*(\(.*\))/\1/g')
     else
       LOGINFROM=":0"
     fi
 
-    if [ "$LOGINFROM" = ":0" ]; then  #skip somewhat slow ssh-agent check if we are not logged onto the console
+    if [ "$LOGINFROM" = ":0" -a "$PS1" ]; then  #skip somewhat slow ssh-agent check if we are not logged onto the console
         export SSH_AUTH_SOCK=/tmp/.ssh-socket-gary
         ssh-add -l #2>&1 > /dev/null
         mystatus=$?
@@ -122,73 +119,6 @@ ${PATH}:\
           ssh-add
         fi
     fi
-    case "`uname -n`" in
-      DellE1705GaryC)
-
-#export JAVA_HOME=/c/j2sdk1.4.1
-#export JAVA_HOME="/c/Program Files/Java/jdk1.5.0"
-#export JAVA_HOME="/c/Program Files/Java/jdk1.6.0"
-#export JAVA_HOME="/c/Sun/SDK/jdk"
-
-#penrose server vd-server.bat needs JAVA_HOME set for running via rxvt/bash
-export JAVA_HOME="c:\Sun\SDK\jdk"
-#export ANT_HOME=/c/jakarta/jakarta-ant-1.5.1
-#export ANT_HOME=/c/jakarta/apache-ant-1.6.2
-export ANT_HOME=/c/jakarta/apache-ant-1.8.0RC1
-
-
-export CLASSPATH="${CLASSPATH};c:\\api\\jwhich"
-
-MANPATH=${MANPATH}:/usr/man:/usr/ssl/man:/usr/X/man
-export MANPATH
-
-PATH=${ANT_HOME}/bin:$PATH
-#        PATH=$(cygpath --unix "${JAVA_HOME}/bin"):$PATH
-PATH="/c/Gary/bin:$PATH"
-export DISPLAY=localhost:0
-
-###############################
-# Python
-PATH="/c/Python23:$PATH"
-
-export CVSROOT=/c/Gary/cvs
-
-export AXIS2_HOME="/c/apache/axis2-1.5.1/"
-PATH="${AXIS2_HOME}/bin:${PATH}"
-
-##############################
-# Maven
-M2_HOME=/c/apache/apache-maven-2.2.1/
-M2=${M2_HOME}/bin
-#MAVEN_OPTS= -Xms256m -Xmx512m
-PATH="${M2}:${PATH}"
-
-##############################
-# SpringSource Roo
-
-export ROO_HOME=/c/api/spring-roo-1.0.2.RELEASE
-PATH="${ROO_HOME}/bin:${PATH}"
-
-##############################
-# Canoo WebTest
-PATH="${PATH}:/c/api/WebTest-canoo/bin"
-
-########################
-# WinMerge
-PATH="${PATH}:/c/Program Files/WinMerge"
-        ;;
-      MININT-VCQU7PL)
-        #export JAVA_HOME='c:\Program Files\Java\jdk1.6.0_30\'
-        export JAVA_HOME='c:\Program Files\Java\jdk1.7.0_01'
-        export ANT_HOME=/c/api/apache-ant-1.8.2
-        PATH=${ANT_HOME}/bin:$PATH
-        M2_HOME=/c/api/apache-maven-3.0.3/
-        M2=${M2_HOME}/bin
-        #MAVEN_OPTS= -Xms256m -Xmx512m
-        PATH="${M2}:${PATH}"
-        ;;
-    esac
-    PATH=$(cygpath --unix "${JAVA_HOME}/bin"):$PATH
     ;;
   HP-UX) 
     # enter HP-UX specific .profile settings here
@@ -268,7 +198,7 @@ if [ "$PS1" ]; then
   alias gerp=grep
   alias grpe=grep
   alias duf='du -sk * | sort -nr | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'''
-
+  alias which='type -a'  # More helpful which
 
   # number of commands to remember in the command history
   HISTSIZE=10000
@@ -285,23 +215,22 @@ if [ "$PS1" ]; then
   stty stop undef
 
 
-#------------------------------------------------------------------------------------------
-# INCREMENTAL HISTORY SEARCH
-# "Add this to your .bashrc and you will be very happy" by Jeet
-#------------------------------------------------------------------------------------------
+  #------------------------------------------------------------------------------------------
+  # INCREMENTAL HISTORY SEARCH
+  # "Add this to your .bashrc and you will be very happy" by Jeet
+  #------------------------------------------------------------------------------------------
 
-## Up Arrow: search and complete from previous history
-# bind '"\eOA": history-search-backward'
-## alternate, if the above does not work for you:
-bind '"\e[A":history-search-backward'
-bind '"\C-p":history-search-backward'
+  ## Up Arrow: search and complete from previous history
+  # bind '"\eOA": history-search-backward'
+  ## alternate, if the above does not work for you:
+  bind '"\e[A":history-search-backward'
+  bind '"\C-p":history-search-backward'
 
-## Down Arrow: search and complete from next history
-# bind '"\eOB": history-search-forward'
-## alternate, if the above does not work for you:
-bind '"\e[B":history-search-forward'
-bind '"\C-n":history-search-forward'
-
+  ## Down Arrow: search and complete from next history
+  # bind '"\eOB": history-search-forward'
+  ## alternate, if the above does not work for you:
+  bind '"\e[B":history-search-forward'
+  bind '"\C-n":history-search-forward'
 
   #setWindowTitle() {
   #  echo -ne "\e]0;$*\a"
@@ -390,7 +319,10 @@ bind '"\C-n":history-search-forward'
     local p_pwd=" ${YELLOW}"'${DIRSTACK[0]}'
     local p_dirstack=" ${GREEN}"'${DIRSTACK[@]:1}'
     local p_ending="${OFF}"'\n\$ '
-    local base_prompt=${p_userColor}${p_display}${p_host}${p_pwd}${p_dirstack}${p_ending}
+
+    local sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
+    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${p_pwd}${p_dirstack}${p_ending}
+
 # Does our terminal know how to handle setting the title bar?
     case "$TERM" in
       xterm*|dtterm*|terminator|rxvt*)
@@ -410,4 +342,9 @@ bind '"\C-n":history-search-forward'
 fi 
 #echo "exit .bashrc"
 
-
+#localhost overrides
+if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
+  source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
+elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
+  source ${RUNDIR}/.bashrc.localhost
+fi
