@@ -239,9 +239,13 @@ if [ "$PS1" ]; then
   xt(){
     xterm -r -sb -j -sk -si -sl 10000 -geom 120x80 $@ &
   }
+
+
   setPrompt(){
+    # http://ascii-table.com/ansi-escape-sequences.php
+    # https://wiki.archlinux.org/index.php/Color_Bash_Prompt
+
     # regular colors
-    local       K="\[\033[0;30m\]"    # black
     local   BLACK='\e[0;30m'
     local     RED='\e[0;31m'
     local   GREEN='\e[0;32m'
@@ -258,19 +262,44 @@ if [ "$PS1" ]; then
     local     B_GREEN='\e[1;32m'
     local    B_YELLOW='\e[1;33m'
     local      B_BLUE='\e[1;34m'
-    local WHITE_B_BLUE='\e[47;1;34m'
     local   B_MAGENTA='\e[1;35m'
     local      B_CYAN='\e[1;36m'
     local     B_WHITE='\e[1;37m'
+    local RED_ON_GREEN='\e[31;1;42m'
+    local RED_ON_BROWN='\e[31;1;43m'
+    local  RED_ON_BLUE='\e[31;1;44m'
+    local BLUE_ON_WHITE='\e[47;1;34m'
     local HOSTCOLOR
+
+    parse_git_branch () {
+      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    }
+
     case "`uname -s | cut -d_ -f1`" in
       Linux)
-        HOSTCOLOR=${B_RED}
+        HOSTCOLOR=${B_DARK_GRAY}  #default color if lsb_release not installed
+        LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
+        if [[ ! -z $LSB_RELEASE ]]; then
+          case "$LSB_RELEASE" in
+            Ubuntu)
+              HOSTCOLOR=${RED_ON_BROWN}
+              ;;
+            CentOS)
+              HOSTCOLOR=${B_RED}
+              ;;
+            LinuxMint)
+              HOSTCOLOR=${RED_ON_GREEN}
+              ;;
+            *)
+              HOSTCOLOR=${RED_ON_BLUE}
+              ;;
+          esac
+        fi
         ;;
       SunOS)
         case "`uname -p`" in
           sparc)
-            HOSTCOLOR=${WHITE_B_BLUE}
+            HOSTCOLOR=${BLUE_ON_WHITE}
             ;;
           i386)
             HOSTCOLOR=${B_GREEN}
@@ -313,15 +342,16 @@ if [ "$PS1" ]; then
 #  fi
 #   local rootColor='$((  ($EUID==0) ? 31 : 32))'
     local rootColor='$((  (${EUID:=1234}==0) ? 31 : 32))'
-    local p_userColor='\n'"\e[${rootColor}m\# \j [\d \t] "
-    local p_display='${DISPLAY} \u@'
+    local p_userColor='\n'"\e[${rootColor}m\! \j [\d \t] "
+    local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
     local p_host="${HOSTCOLOR}\h"
-    local p_pwd=" ${YELLOW}"'${DIRSTACK[0]}'
+    local p_pwd="${YELLOW} "'${DIRSTACK[0]}'
     local p_dirstack=" ${GREEN}"'${DIRSTACK[@]:1}'
     local p_ending="${OFF}"'\n\$ '
 
+
     local sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
-    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${p_pwd}${p_dirstack}${p_ending}
+    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${B_BLUE}'$(parse_git_branch)'${p_pwd}${p_dirstack}${p_ending}
 
 # Does our terminal know how to handle setting the title bar?
     case "$TERM" in
