@@ -343,6 +343,10 @@ if [ "$PS1" ]; then
 #   local rootColor='$((  ($EUID==0) ? 31 : 32))'
     local rootColor='$((  (${EUID:=1234}==0) ? 31 : 32))'
     local p_userColor='\n'"\e[${rootColor}m\! \j [\d \t] "
+    if (( ${BASH_VERSINFO} >= 3)); then # trim down length of date display for recent versions of bash that support \D
+       p_userColor='\n'"\e[${rootColor}m\! \j [\D{%m-%d} \t] "
+    fi
+
     local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
     local p_host="${HOSTCOLOR}\h"
     local p_pwd="${YELLOW} "'${DIRSTACK[0]}'
