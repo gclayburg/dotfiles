@@ -240,7 +240,6 @@ if [ "$PS1" ]; then
     xterm -r -sb -j -sk -si -sl 10000 -geom 120x80 $@ &
   }
 
-
   setPrompt(){
     # http://ascii-table.com/ansi-escape-sequences.php
     # https://wiki.archlinux.org/index.php/Color_Bash_Prompt
@@ -271,9 +270,6 @@ if [ "$PS1" ]; then
     local BLUE_ON_WHITE='\e[47;1;34m'
     local HOSTCOLOR
 
-    parse_git_branch () {
-      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-    }
 
     case "`uname -s | cut -d_ -f1`" in
       Linux)
@@ -349,13 +345,19 @@ if [ "$PS1" ]; then
 
     local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
     local p_host="${HOSTCOLOR}\h"
-    local p_pwd="${YELLOW} "'${DIRSTACK[0]}'
-    local p_dirstack=" ${GREEN}"'${DIRSTACK[@]:1}'
+
+    #dash shell is confused by DIRSTACK
+    local p_pwd="${YELLOW} "'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[0]}; else echo $PWD; fi)'
+    # show directory stack in green, as long as PS1 is being evaluated by bash
+    local p_dirstack=" ${GREEN}"'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[@]:1}; else echo ""; fi)'
+    # " (master)", when in git master branch
+    local git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
+
     local p_ending="${OFF}"'\n\$ '
 
 
     local sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
-    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${B_BLUE}'$(parse_git_branch)'${p_pwd}${p_dirstack}${p_ending}
+    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${B_BLUE}${git_branch}${p_pwd}${p_dirstack}${p_ending}
 
 # Does our terminal know how to handle setting the title bar?
     case "$TERM" in
@@ -367,9 +369,13 @@ if [ "$PS1" ]; then
         ;;
     esac
 
-    #exporting this PS1 confuses dash - it goes into an infinite loop when dash is invoked
-    #   from a bash shell, i.e. on ubuntu systems  /bin/sh -> dash
-    #export PS1
+    #exporting PS1 is helpful when doing things like:
+    # sudo bash
+    # sudo sh
+    # su
+    export PS1
+    alias sh="PS1='\$0 $USER@$HOSTNAME \$ ' sh"  # use very minimal prompt for sh subshells
+    alias dash="PS1='\$0 $USER@$HOSTNAME \$ ' dash"  # use very minimal prompt for sh subshells
   }
   setPrompt
   unset -f setPrompt
