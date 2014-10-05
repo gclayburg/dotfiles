@@ -4,8 +4,7 @@
 
 RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
 UNQUALIFIED_HOSTNAME=$(echo $HOSTNAME | cut -d. -f1)
-#echo "RUNDIR: $RUNDIR"
-#echo "bash source: $BASH_SOURCE"
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
         . /etc/bashrc
@@ -51,16 +50,9 @@ ${PATH}:\
     if [ -r /usr/bin/firefox ]; then
       export BROWSER=/usr/bin/firefox
     fi
-    #oracle XE
-    if [ -d /usr/lib/oracle/xe/app/oracle/product/10.2.0/server ]; then
-      export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
-      export PATH=$PATH:$ORACLE_HOME/bin
-      export ORACLE_SID=XE
-    fi
-  # make less more friendly for non-text input files
-  [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-
+    # make less more friendly for non-text input files
+    [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
     ;;
   SunOS)
     PATH=${PATH}:\
@@ -80,14 +72,7 @@ ${PATH}:\
     
     MANPATH=${MANPATH}:/usr/share/man:/usr/openwin/man:/usr/dt/share/man:/usr/local/man
     export PATH MANPATH
-    JAVA_HOME=/usr/java1.2
-    export JAVA_HOME
     alias more=/usr/xpg4/bin/more
-    
-    #################################################################
-    # JWhich CLASSPATH
-    CLASSPATH=$CLASSPATH:~/classes
-    export CLASSPATH
     ;;
   CYGWIN) #Win XP, 2000, NT, Vista?
     #Windows XP/Cygwin reports $0 as "-sh" when invoking !ls from ftp server 
@@ -102,6 +87,7 @@ ${PATH}:\
       LOGINFROM=":0"
     fi
 
+    #start up ssh-agent for the first terminal window opened under cygwin
     if [ "$LOGINFROM" = ":0" -a "$PS1" ]; then  #skip somewhat slow ssh-agent check if we are not logged onto the console
         export SSH_AUTH_SOCK=/tmp/.ssh-socket-gary
         ssh-add -l #2>&1 > /dev/null
@@ -207,13 +193,11 @@ if [ "$PS1" ]; then
 
   FCEDIT=vi
 
-
   #allow bash to resize screen area when terminal window size changes
   shopt -s checkwinsize
 
   #allow C-s (forward search to work in shell)
   stty stop undef
-
 
   #------------------------------------------------------------------------------------------
   # INCREMENTAL HISTORY SEARCH
@@ -268,6 +252,7 @@ if [ "$PS1" ]; then
     local RED_ON_BROWN='\e[31;1;43m'
     local  RED_ON_BLUE='\e[31;1;44m'
     local BLUE_ON_WHITE='\e[47;1;34m'
+    local YELLOW_ON_BLACK='\e[40;1;33m'
     local HOSTCOLOR
 
 
@@ -280,7 +265,7 @@ if [ "$PS1" ]; then
             Ubuntu)
               HOSTCOLOR=${RED_ON_BROWN}
               ;;
-            CentOS)
+            CentOS | RedHat)
               HOSTCOLOR=${B_RED}
               ;;
             LinuxMint)
@@ -320,27 +305,15 @@ if [ "$PS1" ]; then
     esac
     local xterm_titlebar='\[\e]0;\u@\h:\w\a'
 
+# if exist status of last command is non-zero, print it out prominently in yellow on red
+    local exit_status='$(last_stat=$?;if [ $last_stat -ne 0 ]; then echo "\e[41;1;33m${last_stat}\e[0m "; fi)'
+
 # This first part of prompt will be shown in red for the root user, 
 # green otherwise.
-# Computing the root user color within the prompt slows down prompt rendering, 
-#   but it allows the user to su to root and get a valid colored prompt without needing to re-source .bashrc 
-  
-
-# if the -u option exists, id -u allows faster prompt rendering, esp on Cygwin
-#  id -u > /dev/null 2>&1
-#  if [ "$?" -eq "0" ]; then  
-#    rootColor='$(( ($(id -u)==0) ? 31 : 32))'
-#    rootColor='$((  ($EUID==0) ? 31 : 32))'
-#  else
-#    rootColor='$(( ($(id | cut -d= -f2 | cut -d\( -f1)==0) ? 31 : 32))'
-#    rootColor='$(( ($(fastid=$(id) ; someid="${fastid#*=}" ; echo "${someid%%(*)}") ==0) ? 31 : 32))'
-#    rootColor='$((  ($EUID==0) ? 31 : 32))'
-#  fi
-#   local rootColor='$((  ($EUID==0) ? 31 : 32))'
-    local rootColor='$((  (${EUID:=1234}==0) ? 31 : 32))'
-    local p_userColor='\n'"\e[${rootColor}m\! \j [\d \t] "
+    local rootColor='$((  (${EUID}==0) ? 31 : 32))'
+    local p_userColor='\n'"${exit_status}\e[${rootColor}m\! \j [\d \t] "
     if (( ${BASH_VERSINFO} >= 3)); then # trim down length of date display for recent versions of bash that support \D
-       p_userColor='\n'"\e[${rootColor}m\! \j [\D{%m-%d} \t] "
+       p_userColor='\n'"${exit_status}\e[${rootColor}m\! \j [\D{%m-%d} \t] "
     fi
 
     local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
@@ -355,7 +328,7 @@ if [ "$PS1" ]; then
 
     local p_ending="${OFF}"'\n\$ '
 
-
+    #display identities held by ssh-agent for this session
     local sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
     local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${B_BLUE}${git_branch}${p_pwd}${p_dirstack}${p_ending}
 
