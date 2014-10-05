@@ -13,9 +13,11 @@ go(){
   echo "--> $*"
   eval $*
 }
-
-doOne(){
+tarit(){
   go tar -cvf dotfiles2009.tar .prof* .bash* .dir_colors .inputrc
+}
+
+distributeOne(){
   BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
 #  if [  "$1" == "ogre" ]; then
 #    go ssh $1 "mkdir $BACKUPDIR"
@@ -38,6 +40,22 @@ doOne(){
 
 #    go ssh "$1" chmod 644 .profile
 #  fi
+}
+
+doOne(){
+  tarit
+  distributeOne
+}
+
+doAll(){
+  tarit
+  go cp dotfiles2009.tar /mnt/web
+  distributeOne ogre
+  distributeOne gary@jamaica
+  distributeOne localhost
+  distributeOne gclaybur@jamaica
+  distributeOne bears
+  distributeOne bagley
 }
 
 usage(){
