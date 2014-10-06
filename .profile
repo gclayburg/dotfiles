@@ -112,6 +112,53 @@ export MY_USER=`whoami`
 #  USER=`/usr/ucb/whoami`
 #fi
 HOSTNAME=`uname -n`
+B_RED='\033[1;31m'
+B_DARK_GRAY='\033[1;30m'
+BLACK_ON_RED='\033[30;1;41m'
+CYAN_ON_RED='\033[36;1;41m'
+GREEN_ON_BLUE='\033[32;1;44m'
+RED_ON_GREEN='\033[31;1;42m'
+RED_ON_BROWN='\033[31;1;43m'
+RED_ON_BLUE='\033[31;1;44m'
+B_YELLOW_ON_RED='\033[1;41;33m'
+
+COLOR_OFF='\033[00m'
+
+case "`uname -s | cut -d_ -f1`" in
+  Linux)
+
+    HOSTCOLOR=${B_DARK_GRAY}  #default color if lsb_release not installed
+    LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
+    if [[ ! -z $LSB_RELEASE ]]; then
+      case "$LSB_RELEASE" in
+        Ubuntu)
+          HOSTCOLOR=${RED_ON_BROWN}
+          ;;
+        CentOS | RedHat)
+          HOSTCOLOR=${B_RED}
+          ;;
+        LinuxMint)
+          HOSTCOLOR=${RED_ON_GREEN}
+          ;;
+        *)
+          HOSTCOLOR=${RED_ON_BLUE}
+          ;;
+      esac
+    else
+      exe=`exec 2>/dev/null; readlink "/proc/$$/exe"`
+      case "$exe" in
+        */busybox)  #i.e. Synology Diskstation
+          HOSTCOLOR=${CYAN_ON_RED}
+          ;;
+      esac
+    fi
+    ;;
+  VMkernel) #VMware ESXi
+    HOSTCOLOR=${B_YELLOW_ON_RED}
+    ;;
+esac
+COLORHOSTNAME=${HOSTCOLOR}$HOSTNAME${COLOR_OFF}
+
 case "$MY_USER" in
   root)
     CHAR="#"
@@ -160,7 +207,7 @@ case "$0" in
     #man will fail on AIX/ksh if ENV is set
     ENV=$HOME/.profile
 
-    PS1="[${MY_USER:-?}@${HOSTNAME}] ${CHAR:-?} "
+    PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${CHAR:-?} "
     ;;
   *)
     #blindly assume other shells have less installed
@@ -172,25 +219,27 @@ case "$0" in
 esac #case "$0"
 #echo "profile PS1: $PS1"
 
-#Customized history settings
-TTY=`tty | sed -e 's,.*/,,'`
-HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
-HISTSIZE=1000
-FCEDIT=vi
+export PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH ENV LANG
 
-export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH HISTFILE HISTSIZE ENV LANG
+#ash is too limited to run who or tty commands
+if [  "$0" != "-ash" -a "$0" != "ash" ]; then
+  #Customized history settings
+  TTY=`tty | sed -e 's,.*/,,'`
+  HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
+  HISTSIZE=1000
+  FCEDIT=vi
+  export FCEDIT HISTFILE HISTSIZE
 
-
-if [ -t 0 ]; then #we have tty, do interactive settings
-  TT=$(tty | cut -d\/ -f3-)
-  IP=$(who | grep $TT | sed -e 's,.*(,,' | cut -d\) -f1)
-  #echo "IP: $IP"
-  export DISPLAY=${DISPLAY:-"${IP}:0.0"}
-  #echo "DISPLAY: $DISPLAY"
+  if [ -t 0 ]; then #we have tty, do interactive settings
+    TT=$(tty | cut -d\/ -f3-)
+    IP=$(who | grep $TT | sed -e 's,.*(,,' | cut -d\) -f1)
+    #attempt to construct a DISPLAY from incoming connection, if not set already
+    export DISPLAY=${DISPLAY:-"${IP}:0.0"}
+  fi
 fi
 
-# OS agnostic settings not always safe for Bourne shell
-if [ "$0" != "sh" -a "$0" != "-sh" ]; then
+# OS agnostic settings not always safe for Bourne /ash shell
+if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" ]; then
   set -o emacs
 
   #stupid finger patch
