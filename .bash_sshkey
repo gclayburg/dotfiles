@@ -11,16 +11,23 @@ echo "  installid evans.example.com"
 }
 
 installid(){
-  if [[ -r "$HOME/.ssh/id_rsa.pub" ]]; then
-    PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
-  elif [[ -r "$HOME/.ssh/id_dsa.pub" ]]; then
-    PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
-  else
-    echo "No ssh key found. Please use ssh-keygen manually to generate public/private keypair"
-  fi
-  cat "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
-
+  PUBLIC_KEY=$(ssh-add -L | head -1)
   status=$?
+  if [[ -n ${PUBLIC_KEY} ]]; then
+
+    echo "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
+    status=$?
+  else
+    if [[ -r "$HOME/.ssh/id_rsa.pub" ]]; then
+      PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
+    elif [[ -r "$HOME/.ssh/id_dsa.pub" ]]; then
+      PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
+    else
+      echo "No ssh key found. Please use ssh-keygen manually to generate public/private keypair"
+    fi
+    cat "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
+    status=$?
+  fi
   if [[ "$status" != "0" ]]; then
     installidusage
   else
