@@ -44,7 +44,7 @@ distributeOne(){
 
 doOne(){
   tarit
-  distributeOne
+  distributeOne "$*"
 }
 
 doAll(){
@@ -56,6 +56,9 @@ doAll(){
   distributeOne gclaybur@jamaica
   distributeOne bears
   distributeOne bagley
+  distributeOne diskstation
+  distributeOne paladin
+  distributeOne 192.168.1.199
 }
 
 usage(){
