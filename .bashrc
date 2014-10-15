@@ -395,7 +395,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if [[ $(git branch) ]]; then
+    if [[ $(git branch 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
