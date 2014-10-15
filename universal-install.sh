@@ -19,7 +19,7 @@ if [ "$?" = "0" ]; then
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
-  if [ "$?" = ")" ]; then
+  if [ "$?" = "0" ]; then
     echo
     echo
     echo "dotfiles were successfully installed.  To use them, login to this box again or execute \". .bashrc\" "
