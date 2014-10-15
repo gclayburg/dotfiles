@@ -1,4 +1,0 @@
-
-#####################
-# ibm apache web server
-PATH=${PATH}:/opt/ibmhttpd/bin

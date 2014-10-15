@@ -1,9 +1,0 @@
-#echo "enter .profile_winxp"
-
-#Windows XP/Cygwin reports $0 as "-sh" when invoking !ls from ftp server 
-if [ $0 != "sh" -a $0 != "-sh" ]; then
-  alias more=less
-  alias mroe=less
-fi
-#echo "exit .profile_winxp"
-

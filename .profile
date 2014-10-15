@@ -49,23 +49,15 @@ include (){
 MY_HOST=`uname -n`
 case "`uname -s | cut -d_ -f1`" in
   Linux)
-    include "${PROFILE_HOME}/.profile_linux"
-    include "${PROFILE_HOME}/.profile_linux_${MY_HOST}"
     PATH=/opt/ibm/ldap/V6.2/bin/32:${PATH}
     ;;
   SunOS)
-    include "${PROFILE_HOME}/.profile_solaris"
-    include "${PROFILE_HOME}/.profile_solaris_${MY_HOST}"
     ;;
   CYGWIN) #Win XP, 2000, NT, Vista?
-    include "${PROFILE_HOME}/.profile_cygwin"
-    include "${PROFILE_HOME}/.profile_cygwin_${MY_HOST}"
     ;;
   HP-UX) 
-    include "${PROFILE_HOME}/.profile_hp"
-    include "${PROFILE_HOME}/.profile_hp_${MY_HOST}"
     ;;
-  AIX)  #AIX
+  AIX)
     PATH=${PATH}:/opt/freeware/bin
     PATH=/opt/IBM/ldap/V6.1/bin:/opt/IBM/ldap/V6.1/sbin:${PATH}
     export JAVA_HOME=/usr/java14
@@ -89,8 +81,6 @@ case "`uname -s | cut -d_ -f1`" in
     CATALINA_HOME=
 
     ulimit -d unlimited
-    include "${PROFILE_HOME}/.profile_aix"
-    include "${PROFILE_HOME}/.profile_aix_${MY_HOST}"
     ;;
   *)
     ;;
@@ -105,7 +95,6 @@ LANG=C
 
 # Setup PS1 (prompt) for sh and ksh.
 # This prompt also works for a basic, boring bash prompt 
-# bash settings are overridden in .bashrc
 
 export MY_USER=`whoami`
 #if ( "$?" -ne "0" ) then
