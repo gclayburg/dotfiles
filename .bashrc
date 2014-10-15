@@ -244,7 +244,7 @@ if [ "$PS1" ]; then
     local       B_RED='\e[1;31m'
     local     B_GREEN='\e[1;32m'
     local    B_YELLOW='\e[1;33m'
-    local      B_BLUE='\e[0;35m'
+    local      B_BLUE='\e[0;34m'
     local   B_MAGENTA='\e[1;35m'
     local      B_CYAN='\e[1;36m'
     local     B_WHITE='\e[1;37m'
