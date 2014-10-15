@@ -141,8 +141,6 @@ ${PATH}:\
     CATALINA_HOME=
 
     ulimit -d unlimited
-    include "${PROFILE_HOME}/.profile_aix"
-    include "${PROFILE_HOME}/.profile_aix_${MY_HOST}"
 
     #some AIX boxes do not have less installed
     PAGER=more
