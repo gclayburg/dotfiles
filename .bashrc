@@ -244,7 +244,7 @@ if [ "$PS1" ]; then
     local       B_RED='\e[1;31m'
     local     B_GREEN='\e[1;32m'
     local    B_YELLOW='\e[1;33m'
-    local      B_BLUE='\e[0;34m'
+    local      B_BLUE='\e[1;34m'
     local   B_MAGENTA='\e[1;35m'
     local      B_CYAN='\e[1;36m'
     local     B_WHITE='\e[1;37m'
@@ -305,15 +305,17 @@ if [ "$PS1" ]; then
     esac
     local xterm_titlebar='\[\e]0;\u@\h:\w\a'
 
-# if exist status of last command is non-zero, print it out prominently in yellow on red
-    local exit_status='$(last_stat=$?;if [ $last_stat -ne 0 ]; then echo "\e[41;1;33m${last_stat}\e[0m "; fi)'
+# if status of last command is non-zero, print it out prominently in yellow on red
+    local p_exit_status='$(last_stat=$?;if [ $last_stat -ne 0 ]; then echo "\e[41;1;33m${last_stat}\e[0m "; fi)'
 
 # This first part of prompt will be shown in red for the root user, 
 # green otherwise.
     local rootColor='$((  (${EUID}==0) ? 31 : 32))'
-    local p_userColor='\n'"${exit_status}\e[${rootColor}m\! \j [\d \t] "
+    local p_userColor="\e[${rootColor}m"
+    local p_jobs="\! \j "
+    local p_datetime="[\d \t] " #safe even for old versions of bash
     if (( ${BASH_VERSINFO} >= 3)); then # trim down length of date display for recent versions of bash that support \D
-       p_userColor='\n'"${exit_status}\e[${rootColor}m\! \j [\D{%m-%d} \t] "
+       p_datetime="[\D{%m-%d} \t] "
     fi
 
     local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
@@ -324,13 +326,25 @@ if [ "$PS1" ]; then
     # show directory stack in green, as long as PS1 is being evaluated by bash
     local p_dirstack=" ${GREEN}"'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[@]:1}; else echo ""; fi)'
     # " (master)", when in git master branch
-    local git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
+    local p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
 
     local p_ending="${OFF}"'\n\$ '
 
     #display identities held by ssh-agent for this session
-    local sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
-    local base_prompt=${p_userColor}${sshagentkeys}${p_display}${p_host}${B_BLUE}${git_branch}${p_pwd}${p_dirstack}${p_ending}
+    local p_sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
+
+    local base_prompt='\n'
+    base_prompt=${base_prompt}${p_exit_status}
+    base_prompt=${base_prompt}${p_userColor}
+    base_prompt=${base_prompt}${p_jobs}
+    base_prompt=${base_prompt}${p_datetime}
+    base_prompt=${base_prompt}${p_sshagentkeys}
+    base_prompt=${base_prompt}${p_display}
+    base_prompt=${base_prompt}${p_host}
+    base_prompt=${base_prompt}${p_gitbranch}
+    base_prompt=${base_prompt}${p_pwd}
+    base_prompt=${base_prompt}${p_dirstack}
+    base_prompt=${base_prompt}${p_ending}
 
 # Does our terminal know how to handle setting the title bar?
     case "$TERM" in
