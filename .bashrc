@@ -392,8 +392,14 @@ if [ "$PS1" ]; then
     local p_pwd="${YELLOW} "'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[0]}; else echo $PWD; fi)'
     # show directory stack in green, as long as PS1 is being evaluated by bash
     local p_dirstack=" ${GREEN}"'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[@]:1}; else echo ""; fi)'
+
     # " (master)", when in git master branch
-    local p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
+    local p_gitbranch=""
+    if [[ $(git branch) ]]; then
+      #only evaluate git branch info if git is installed on this box
+      #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
+      p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
+    fi
 
     local p_ending="${OFF}"'\n\$ '
 
