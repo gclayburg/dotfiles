@@ -186,12 +186,79 @@ if [ "$PS1" ]; then
   alias duf='du -sk * | sort -nr | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'''
   alias which='type -a'  # More helpful which
 
+  alias ssh='ssh -A'  #single sign-on
+
   # number of commands to remember in the command history
   HISTSIZE=10000
   # The maximum number of commands to remember in the history file
   HISTFILESIZE=50000
 
   FCEDIT=vi
+
+  installidusage(){
+    echo "usage: installid [user@]hostname"
+    echo "usage examples:"
+    echo
+    echo "install my public key into the gclaybur user on host ogre:"
+    echo "  installid gclaybur@ogre"
+    echo
+    echo "install my public key into the $USER user on host evans.example.com:"
+    echo "  installid evans.example.com"
+    }
+
+  installid(){  #install my public key on to another host to enable SSO
+    PUBLIC_KEY=$(ssh-add -L | head -1)
+    status=$?
+    if [[ -n ${PUBLIC_KEY} ]]; then #use public key from ssh agent
+
+      echo "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
+      status=$?
+    else #try to use public key created on this host
+      if [[ -r "$HOME/.ssh/id_rsa.pub" ]]; then
+        PUBLIC_KEY="$HOME/.ssh/id_rsa.pub";
+      elif [[ -r "$HOME/.ssh/id_dsa.pub" ]]; then
+        PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
+      else
+        echo "No ssh key found. Please use ssh-keygen manually to generate public/private keypair  OR"
+        echo "re-execute this command after logging on to this host with SSH keys"
+        return 99
+      fi
+      cat "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
+      status=$?
+    fi
+    if [[ "$status" != "0" ]]; then
+      installidusage
+    else
+      ASSIMILATED_HOSTS="$HOME/.ssh/assimilated_hosts"
+      if [[ ! (-f ${ASSIMILATED_HOSTS}) ]]; then
+        echo "# This is a generated list of known places where this user can login with public key\n" >> ${ASSIMILATED_HOSTS}
+      fi
+      echo "$1" >> ${ASSIMILATED_HOSTS};
+    fi
+  }
+
+  go(){
+    echo "--> $*"
+    eval $*
+  }
+
+  pushdotfiles(){
+    BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
+    echo "$1" | grep : > /dev/null
+    if [ "$?" == "0" ]; then # assume $1 is of the form: rbeatty@jaxaf2661:gclaybur/
+      USER_DIR="$1"
+      USER_SPEC=$(echo "$1" | cut -d: -f1)
+      USER_HIJACK=$(echo "$1" | cut -d: -f2)
+      go ssh ${USER_SPEC} "mkdir $USER_HIJACK"
+    else  #append : to specify home directory of user on remote host
+      USER_DIR="$1":
+    fi
+    #backup any previous dotfiles
+    go ssh $1 "mkdir $BACKUPDIR"
+    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
+    go scp -rp .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
+  }
+
 
   #allow bash to resize screen area when terminal window size changes
   shopt -s checkwinsize

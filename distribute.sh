@@ -35,7 +35,7 @@ distributeOne(){
     fi
     #backup any previous dotfiles
     go ssh $1 "mkdir $BACKUPDIR"
-    go ssh $1 "cp .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
+    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
     go    scp -rp .bash* .prof* .dir_colors .inputrc "${USER_DIR}"
 
 #    go ssh "$1" chmod 644 .profile
