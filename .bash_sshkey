@@ -24,6 +24,7 @@ installid(){
       PUBLIC_KEY="$HOME/.ssh/id_dsa.pub";
     else
       echo "No ssh key found. Please use ssh-keygen manually to generate public/private keypair"
+      return 99
     fi
     cat "$PUBLIC_KEY" | ssh "$1" "if [[ ! -d .ssh ]]; then mkdir .ssh; chmod 700 .ssh; fi; cat >> .ssh/authorized_keys"
     status=$?
