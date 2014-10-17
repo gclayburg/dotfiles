@@ -141,7 +141,7 @@ CentOS:
 
 In general, Linux hosts use red for the hostname.  The background color of the hostname represents the linux distribution.
 
-When this prompt is used as the root user, much of the prompt is shown in red instead of green.  This is just another visual reminder that this window is logged on as root.
+When this prompt is used as the root user, much of the prompt is shown in red instead of green.  This is just another visual reminder that you are root here.  Be careful.
 
 ![root](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-root.png)
 
@@ -165,7 +165,7 @@ When I say securely log in, what I mean is that we are using ssh-agent to protec
 
 
 ###SSH agent forwarding
-The other thing to be aware of is this alias in .bashrc:
+One thing to be aware of is this alias in .bashrc:
 
 ```
 alias ssh='ssh -A'
