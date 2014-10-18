@@ -1,4 +1,4 @@
-# Make sure ENV settings are set for each bash subshell
+## Make sure ENV settings are set for each bash subshell
 #set -x
 #echo "enter .bashrc "
 
@@ -89,21 +89,19 @@ ${PATH}:\
 
     #start up ssh-agent for the first terminal window opened under cygwin
     if [ "$LOGINFROM" = ":0" -a "$PS1" ]; then  #skip somewhat slow ssh-agent check if we are not logged onto the console
-        export SSH_AUTH_SOCK=/tmp/.ssh-socket-gary
-        ssh-add -l #2>&1 > /dev/null
-        mystatus=$?
-        echo "ssh-add status: $mystatus"
-        if [ $mystatus -eq 2 ]; then
-          # ssh-agent is not running, start it
-          echo "\$ ssh-agent -a $SSH_AUTH_SOCK > /tmp/.ssh-script-gary"
-          rm -f $SSH_AUTH_SOCK
-          ssh-agent -a $SSH_AUTH_SOCK > /tmp/.ssh-script-gary
-          #sleep 10
-          . /tmp/.ssh-script-gary
-          echo $SSH_AGENT_PID > /tmp/.ssh-agent-pid
-          echo "started agent"
-          ssh-add
-        fi
+      export SSH_AUTH_SOCK=/tmp/.ssh-socket
+      export SSH_AUTH_SCRIPT=/tmp/.ssh-script
+      if [[ -e $SSH_AUTH_SCRIPT ]]; then
+        . $SSH_AUTH_SCRIPT
+      fi
+      if  ! $(ps -p ${SSH_AGENT_PID} 1 | grep agent >/dev/null) ; then #ssh-agent is not running
+        echo "starting ssh-agent..."
+        rm -f $SSH_AUTH_SOCK
+        rm -f $SSH_AUTH_SCRIPT
+        ssh-agent -a $SSH_AUTH_SOCK > $SSH_AUTH_SCRIPT
+        . $SSH_AUTH_SCRIPT
+        ssh-add #login required if passphrase is set on any private keys
+      fi
     fi
     ;;
   HP-UX) 
@@ -184,7 +182,7 @@ if [ "$PS1" ]; then
   alias duf='du -sk * | sort -nr | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'''
   alias which='type -a'  # More helpful which
 
-  alias ssh='ssh -A'  #single sign-on.  Note this should be disabled if you do not trust ssh servers you are logging into.  see "man ssh"
+  alias ssh='ssh -A'  #single sign-on
 
   # number of commands to remember in the command history
   HISTSIZE=10000
@@ -252,10 +250,9 @@ if [ "$PS1" ]; then
       USER_DIR="$1":
     fi
     #backup any previous dotfiles
-    echo "Backing up any existing files to $1:$BACKUPDIR"
-    ssh $1 "mkdir $BACKUPDIR"
-    ssh $1 "for olddotfile in .bash_login .bashrc .profile .dir_colors .inputrc; do [ -r \${olddotfile} ] && cp -p \${olddotfile} ${BACKUPDIR} && echo \${olddotfile}; done"
-    go scp -rp       .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
+    go ssh $1 "mkdir $BACKUPDIR"
+    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
+    go scp -rp .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
 
@@ -394,7 +391,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if [[ $(git --version 2> /dev/null) ]]; then
+    if [[ $(git branch 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
