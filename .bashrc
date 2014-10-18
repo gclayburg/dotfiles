@@ -184,7 +184,7 @@ if [ "$PS1" ]; then
   alias duf='du -sk * | sort -nr | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'''
   alias which='type -a'  # More helpful which
 
-  alias ssh='ssh -A'  #single sign-on
+  alias ssh='ssh -A'  #single sign-on.  Note this should be disabled if you do not trust ssh servers you are logging into.  see "man ssh"
 
   # number of commands to remember in the command history
   HISTSIZE=10000
@@ -252,9 +252,10 @@ if [ "$PS1" ]; then
       USER_DIR="$1":
     fi
     #backup any previous dotfiles
-    go ssh $1 "mkdir $BACKUPDIR"
-    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
-    go scp -rp .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
+    echo "Backing up any existing files to $1:$BACKUPDIR"
+    ssh $1 "mkdir $BACKUPDIR"
+    ssh $1 "for olddotfile in .bash_login .bashrc .profile .dir_colors .inputrc; do [ -r \${olddotfile} ] && cp -p \${olddotfile} ${BACKUPDIR} && echo \${olddotfile}; done"
+    go scp -rp       .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
 
@@ -393,7 +394,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if [[ $(git branch 2> /dev/null) ]]; then
+    if [[ $(git --version 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
