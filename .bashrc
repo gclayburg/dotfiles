@@ -311,6 +311,7 @@ if [ "$PS1" ]; then
     local   B_MAGENTA='\e[1;35m'
     local      B_CYAN='\e[1;36m'
     local     B_WHITE='\e[1;37m'
+    local RED_UNDERLINE='\e[4;31m'
     local RED_ON_GREEN='\e[31;1;42m'
     local RED_ON_BROWN='\e[31;1;43m'
     local  RED_ON_BLUE='\e[31;1;44m'
@@ -321,7 +322,7 @@ if [ "$PS1" ]; then
 
     case "`uname -s | cut -d_ -f1`" in
       Linux)
-        HOSTCOLOR=${B_DARK_GRAY}  #default color if lsb_release not installed
+        HOSTCOLOR=${RED_UNDERLINE}  #default color if lsb_release not installed
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
           case "$LSB_RELEASE" in
@@ -338,6 +339,10 @@ if [ "$PS1" ]; then
               HOSTCOLOR=${RED_ON_BLUE}
               ;;
           esac
+        else
+          if [[ -e /etc/redhat-release ]]; then
+              HOSTCOLOR=${B_RED}
+          fi
         fi
         ;;
       SunOS)
