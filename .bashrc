@@ -92,7 +92,7 @@ ${PATH}:\
       export SSH_AUTH_SOCK=/tmp/.ssh-socket
       export SSH_AUTH_SCRIPT=/tmp/.ssh-script
       if [[ -e $SSH_AUTH_SCRIPT ]]; then
-        . $SSH_AUTH_SCRIPT
+        . $SSH_AUTH_SCRIPT > /dev/null #don't tell me the pid.  I got it.
       fi
       if  ! $(ps -p ${SSH_AGENT_PID} 1 | grep agent >/dev/null) ; then #ssh-agent is not running
         echo "starting ssh-agent..."
