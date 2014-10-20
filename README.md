@@ -8,7 +8,7 @@ universal Linux/Unix dotfiles for the HOME directory of any user
 2. execute this command
 
 ```
-$ curl http://bit.ly/universaldotfiles | bash
+$ curl -L http://bit.ly/universaldotfiles | bash
 ```
 
 
