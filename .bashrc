@@ -251,6 +251,12 @@ if [ "$PS1" ]; then
     fi
     #backup any previous dotfiles
     go ssh $1 "mkdir $BACKUPDIR"
+    sshstatus=$?
+
+    if [[ $sshstatus != 0 ]] ; then
+      echo "$1 down?"
+      return $sshstatus
+    fi
     go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
     go scp -rp .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
@@ -399,7 +405,7 @@ if [ "$PS1" ]; then
     if [[ $(git branch 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
-      p_gitbranch="${BLUE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/ (\1)/" )'
+      p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
     fi
 
     local p_ending="${OFF}"'\n\$ '
@@ -415,6 +421,7 @@ if [ "$PS1" ]; then
     base_prompt=${base_prompt}${p_sshagentkeys}
     base_prompt=${base_prompt}${p_display}
     base_prompt=${base_prompt}${p_host}
+    base_prompt=${base_prompt}${OFF}" "
     base_prompt=${base_prompt}${p_gitbranch}
     base_prompt=${base_prompt}${p_pwd}
     base_prompt=${base_prompt}${p_dirstack}
