@@ -11,6 +11,8 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # OS/shell common settings
+# some systems do not put directories like /usr/sbin in the PATH.  Here,
+# we just add everything.  Some directories in PATH may be duplicated.
 PATH=/usr/bin:\
 /bin:\
 /usr/sbin:\
@@ -39,13 +41,34 @@ LANG=C
 
 case "`uname -s | cut -d_ -f1`" in
   Linux)
-    MANPATH=${MANPATH}:/usr/share/man:/usr/X11R6/man
+    if [[ -d /usr/X11R6/man ]]; then
+      MANPATH=${MANPATH}:/usr/X11R6/man
+    fi
     export PATH MANPATH
-    JAVA_HOME=${JAVA_HOME:-/usr/java/latest/}
-    export JAVA_HOME
-    PATH=${JAVA_HOME}/bin:\
-${PATH}:\
-/usr/X11R6/bin/
+    #Opinionated JAVA_HOME finder
+    #Don't rely on someone having setup /etc/alternatives.
+    # We prefer Sun/Oracle JVM for greatest compatibility, if installed
+#    if [[ -d /usr/java/latest/ ]]; then #rpm style
+#      JAVA_HOME=${JAVA_HOME:-/usr/java/latest/}
+#    elif [[ -d /usr/lib/jvm/java-8-oracle/ ]]; then #deb style
+#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-8-oracle/}
+#    elif [[ -d /usr/lib/jvm/java-7-oracle/ ]]; then
+#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-7-oracle/}
+#    elif [[ -d /usr/lib/jvm/default-java/ ]]; then
+#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/default-java/}
+#    fi
+
+    #build JAVA_HOME from javac:
+    if [[ -e /usr/bin/javac ]]; then
+      JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
+    fi
+    if [[ -n "$JAVA_HOME" ]]; then
+      export JAVA_HOME
+      PATH=${JAVA_HOME}/bin:$PATH
+    fi
+    if [[ -d /usr/X11R6/bin/ ]]; then  #X programs on older systems
+      PATH=${PATH}:/usr/X11R6/bin/
+    fi
     alias ls='ls -F --color=tty'
     if [ -r /usr/bin/firefox ]; then
       export BROWSER=/usr/bin/firefox
@@ -70,7 +93,7 @@ ${PATH}:\
             TTY=`tty | sed -e 's,.*/,,'`
     fi
     
-    MANPATH=${MANPATH}:/usr/share/man:/usr/openwin/man:/usr/dt/share/man:/usr/local/man
+    MANPATH=${MANPATH}:/usr/openwin/man:/usr/dt/share/man:/usr/local/man
     export PATH MANPATH
     alias more=/usr/xpg4/bin/more
     ;;
@@ -332,14 +355,11 @@ if [ "$PS1" ]; then
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
           case "$LSB_RELEASE" in
-            Ubuntu)
+            Ubuntu | LinuxMint)
               HOSTCOLOR=${RED_ON_BROWN}
               ;;
             CentOS | RedHat)
               HOSTCOLOR=${B_RED}
-              ;;
-            LinuxMint)
-              HOSTCOLOR=${RED_ON_GREEN}
               ;;
             *)
               HOSTCOLOR=${RED_ON_BLUE}
@@ -402,7 +422,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if [[ $(git branch 2> /dev/null) ]]; then
+    if [[ $(git --version 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
