@@ -75,7 +75,13 @@ case "`uname -s | cut -d_ -f1`" in
     fi
 
     # make less more friendly for non-text input files
-    [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+    if [ -x /usr/bin/lesspipe ]; then
+      #try asking this lesspipe to setup itself (works on ubuntu)
+      if ! eval "$(SHELL=/bin/sh lesspipe)" 2>/dev/null; then
+        #assume this lesspipe can be used this way (works on coreos)
+        export LESSOPEN="|lesspipe %s"
+      fi
+    fi
     ;;
   SunOS)
     PATH=${PATH}:\
