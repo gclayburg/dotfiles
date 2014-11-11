@@ -79,6 +79,7 @@ case "`uname -s | cut -d_ -f1`" in
       #try asking this lesspipe to setup itself (works on ubuntu)
       if ! eval "$(SHELL=/bin/sh lesspipe)" 2>/dev/null; then
         #assume this lesspipe can be used this way (works on coreos)
+        #apparently the lesspipe on coreos will not provide hints to setup itself
         export LESSOPEN="|lesspipe %s"
       fi
     fi
