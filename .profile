@@ -134,9 +134,15 @@ case "`uname -s | cut -d_ -f1`" in
           ;;
       esac
     else
-      exe=`exec 2>/dev/null; readlink "/proc/$$/exe"`
-      case "$exe" in
-        */busybox)  #i.e. Synology Diskstation
+#      exe=`exec 2>/dev/null; readlink "/proc/$$/exe"`
+#      case "$exe" in
+#        */busybox)
+#          HOSTCOLOR=${CYAN_ON_RED}
+#          ;;
+#      esac
+      busyboxcheck=`cat --help 2>&1 | head -1 | cut -d" " -f1`
+      case "$busyboxcheck" in
+        BusyBox) #i.e. Synology Diskstation, or any busybox
           HOSTCOLOR=${CYAN_ON_RED}
           ;;
       esac
