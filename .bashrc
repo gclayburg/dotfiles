@@ -351,6 +351,7 @@ if [ "$PS1" ]; then
     local RED_ON_GREEN='\e[31;1;42m'
     local RED_ON_BROWN='\e[31;1;43m'
     local  RED_ON_BLUE='\e[31;1;44m'
+    local  RED_ON_GRAY='\e[31;1;47m'
     local BLUE_ON_WHITE='\e[47;1;34m'
     local YELLOW_ON_BLACK='\e[40;1;33m'
     local HOSTCOLOR
@@ -372,9 +373,13 @@ if [ "$PS1" ]; then
               HOSTCOLOR=${RED_ON_BLUE}
               ;;
           esac
-        else
-          if [[ -e /etc/redhat-release ]]; then
-              HOSTCOLOR=${B_RED}
+        elif [[ -e /etc/redhat-release ]]; then
+          HOSTCOLOR=${B_RED}
+        elif [[ -f /etc/os-release ]]; then
+          #/etc/coreos/update.conf  for channel: alpha,beta,stable
+          CoreOSname=$(grep "^NAME" /etc/os-release | cut -d"=" -f2)
+          if [[ "$CoreOSname" =~ ^CoreOS ]]; then
+            HOSTCOLOR=${RED_ON_GRAY}
           fi
         fi
         ;;
