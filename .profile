@@ -91,7 +91,7 @@ MANPATH=$MANPATH:/usr/local/man:/usr/local/man/man1:/usr/local/man/man3:/usr/loc
 PROFILE=true
 EDITOR=vi
 VISUAL=vi
-LANG=C
+LANG=en_US.UTF-8
 
 # Setup PS1 (prompt) for sh and ksh.
 # This prompt also works for a basic, boring bash prompt 

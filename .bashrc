@@ -31,7 +31,7 @@ PROFILE=true
 EDITOR=vi
 VISUAL=vi
 PAGER=less
-LANG=C
+LANG=en_US.UTF-8
 
 #include (){
 #  if [ -r "$1" ]; then
