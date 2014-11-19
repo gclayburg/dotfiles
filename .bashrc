@@ -203,6 +203,9 @@ unset -f setDirColors
 export FCEDIT PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH HISTFILE HISTSIZE ENV LANG
 #are we an interactive shell?
 if [ "$PS1" ]; then
+  if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
   set -o emacs
 
   #stupid finger patch
