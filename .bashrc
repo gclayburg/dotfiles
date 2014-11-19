@@ -290,8 +290,8 @@ if [ "$PS1" ]; then
       echo "$1 down?"
       return $sshstatus
     fi
-    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
-    go ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc"
+    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
+    go ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
     go scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
