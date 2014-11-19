@@ -31,7 +31,13 @@ PROFILE=true
 EDITOR=vi
 VISUAL=vi
 PAGER=less
-LANG=en_US.UTF-8
+
+#older Solaris sometimes does not know about UTF-8 locale
+if `locale -a | grep -i en_US.utf8 1>/dev/null 2>&1`; then
+  LANG=en_US.UTF-8
+else
+  LANG=C
+fi
 
 #include (){
 #  if [ -r "$1" ]; then
@@ -382,7 +388,7 @@ if [ "$PS1" ]; then
         elif [[ -f /etc/os-release ]]; then
           #/etc/coreos/update.conf  for channel: alpha,beta,stable
           CoreOSname=$(grep "^NAME" /etc/os-release | cut -d"=" -f2)
-          if [[ "$CoreOSname" =~ ^CoreOS ]]; then
+          if [[ "$CoreOSname" == "CoreOS" ]]; then
             HOSTCOLOR=${RED_ON_GRAY}
           fi
         fi
