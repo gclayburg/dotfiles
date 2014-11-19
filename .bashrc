@@ -291,7 +291,8 @@ if [ "$PS1" ]; then
       return $sshstatus
     fi
     go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/"
-    go scp -rp .bash_login .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
+    go rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc
+    go scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
 

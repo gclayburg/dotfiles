@@ -8,14 +8,16 @@ BACKUPDIR=.dotfiles.backedup.`date "+%Y-%m-%d_%H-%M-%S"`
 echo "Backing up current dotfiles to $BACKUPDIR"
 go mkdir $BACKUPDIR
 if [ "$?" = "0" ]; then
-  for file in .bash_login .bashrc .profile .inputrc .dir_colors; do
+  for file in .bash_login .bash_logout .bashrc .profile .inputrc .dir_colors; do
     if [ -r "$file" ]; then
       go cp -p $file ${BACKUPDIR}
+      go rm $file
     fi
   done
 
   go curl -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_login \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_logout \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
