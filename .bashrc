@@ -267,8 +267,8 @@ if [ "$PS1" ]; then
   }
 
   go(){
-    echo "--> $*"
-    eval $*
+    echo "$(date +%Y-%m-%d_%T) --> $*"
+    eval "$*"
   }
 
   pushdotfiles(){
