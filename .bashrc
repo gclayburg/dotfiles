@@ -2,7 +2,8 @@
 #set -x
 #echo "enter .bashrc "
 
-RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
+#RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
+RUNDIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$HOME}" )" && pwd )"
 UNQUALIFIED_HOSTNAME=$(echo $HOSTNAME | cut -d. -f1)
 
 # Source global definitions
@@ -99,7 +100,7 @@ case "`uname -s | cut -d_ -f1`" in
 /usr/ccs/bin:\
 /usr/ucb/bin:\
 /usr/local/sbin
-    
+    alias psc='ps xawf -eo pid,user,cgroup:40,args' #show process tree
     ###########################
     if [ ! "${DT}" ] ; then  #what the?
             #stty erase 
