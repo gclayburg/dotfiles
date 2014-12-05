@@ -370,6 +370,7 @@ if [ "$PS1" ]; then
 
     case "`uname -s | cut -d_ -f1`" in
       Linux)
+        COREOSDETAIL=""
         HOSTCOLOR=${RED_UNDERLINE}  #default color if lsb_release not installed
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
@@ -391,6 +392,8 @@ if [ "$PS1" ]; then
           CoreOSname=$(grep "^NAME" /etc/os-release | cut -d"=" -f2)
           if [[ "$CoreOSname" == "CoreOS" ]]; then
             HOSTCOLOR=${RED_ON_GRAY}
+            COREOSDETAIL=$(grep "^VERSION=" /etc/os-release | cut -d= -f2)
+            COREOSDETAIL="${COREOSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
           fi
         fi
         ;;
@@ -465,6 +468,7 @@ if [ "$PS1" ]; then
     base_prompt=${base_prompt}${p_display}
     base_prompt=${base_prompt}${p_host}
     base_prompt=${base_prompt}${OFF}" "
+    base_prompt=${base_prompt}${COREOSDETAIL}
     base_prompt=${base_prompt}${p_gitbranch}
     base_prompt=${base_prompt}${p_pwd}
     base_prompt=${base_prompt}${p_dirstack}
