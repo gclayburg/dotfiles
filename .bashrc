@@ -456,6 +456,10 @@ if [ "$PS1" ]; then
 
     local p_ending="${OFF}"'\n\$ '
 
+    local DMI_SYS_VENDOR=""
+    if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]]; then
+       DMI_SYS_VENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "
+    fi
     #display identities held by ssh-agent for this session
     local p_sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
 
@@ -469,6 +473,7 @@ if [ "$PS1" ]; then
     base_prompt=${base_prompt}${p_host}
     base_prompt=${base_prompt}${OFF}" "
     base_prompt=${base_prompt}${COREOSDETAIL}
+    base_prompt=${base_prompt}${DMI_SYS_VENDOR}
     base_prompt=${base_prompt}${p_gitbranch}
     base_prompt=${base_prompt}${p_pwd}
     base_prompt=${base_prompt}${p_dirstack}
