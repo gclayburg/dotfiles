@@ -375,7 +375,7 @@ if [ "$PS1" ]; then
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
           case "$LSB_RELEASE" in
-            Ubuntu | LinuxMint)
+            Ubuntu | LinuxMint | Debian)
               HOSTCOLOR=${RED_ON_BROWN}
               ;;
             CentOS | RedHat)
