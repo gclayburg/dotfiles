@@ -90,6 +90,9 @@ case "`uname -s | cut -d_ -f1`" in
         export LESSOPEN="|lesspipe %s"
       fi
     fi
+
+    #sane settings for systemd:
+    alias systemctl="systemctl -l --no-pager"
     ;;
   SunOS)
     PATH=${PATH}:\
