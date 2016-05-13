@@ -276,7 +276,7 @@ if [ "$PS1" ]; then
     fi
   }
 
-  go(){
+  dateeval(){
     echo "$(date +%Y-%m-%d_%T) --> $*"
     eval "$*"
   }
@@ -288,21 +288,21 @@ if [ "$PS1" ]; then
       USER_DIR="$1"
       USER_SPEC=$(echo "$1" | cut -d: -f1)
       USER_HIJACK=$(echo "$1" | cut -d: -f2)
-      go ssh ${USER_SPEC} "mkdir $USER_HIJACK"
+      dateeval ssh ${USER_SPEC} "mkdir $USER_HIJACK"
     else  #append : to specify home directory of user on remote host
       USER_DIR="$1":
     fi
     #backup any previous dotfiles
-    go ssh $1 "mkdir $BACKUPDIR"
+    dateeval ssh $1 "mkdir $BACKUPDIR"
     sshstatus=$?
 
     if [[ $sshstatus != 0 ]] ; then
       echo "$1 down?"
       return $sshstatus
     fi
-    go ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
-    go ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
-    go scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
+    dateeval ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
+    dateeval ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
+    dateeval scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
 
