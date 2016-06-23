@@ -93,6 +93,8 @@ case "`uname -s | cut -d_ -f1`" in
 
     #sane settings for systemd:
     alias systemctl="systemctl -l --no-pager"
+
+    alias dit="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz images -t"
     ;;
   SunOS)
     PATH=${PATH}:\
