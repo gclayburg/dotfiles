@@ -203,7 +203,7 @@ case "$0" in
     ENV=$HOME/.profile
 
     #if we are really running in a dash shell, don't try to colorize the prompt
-    if [ -z "$BASH_VERSION" ]; then
+    if [ -n "$BASH_VERSION" ]; then
       PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${CHAR:-?} "
     else
       PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${CHAR:-?} "
