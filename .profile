@@ -207,6 +207,7 @@ case "$0" in
       PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${CHAR:-?} "
     else
       PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${CHAR:-?} "
+    fi
     ;;
   *)
     #blindly assume other shells have less installed
