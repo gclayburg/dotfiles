@@ -118,7 +118,7 @@ case "`uname -s | cut -d_ -f1`" in
 
     HOSTCOLOR=${B_DARK_GRAY}  #default color if lsb_release not installed
     LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
-    if [[ ! -z $LSB_RELEASE ]]; then
+    if [ ! -z $LSB_RELEASE ]; then
       case "$LSB_RELEASE" in
         Ubuntu)
           HOSTCOLOR=${RED_ON_BROWN}
