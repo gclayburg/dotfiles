@@ -483,6 +483,7 @@ if [ "$PS1" ]; then
     base_prompt=${base_prompt}${p_host}
     base_prompt=${base_prompt}${OFF}" "
     base_prompt=${base_prompt}${COREOSDETAIL}
+    base_prompt=${base_prompt}${DOCKER}
     base_prompt=${base_prompt}${DMI_SYS_VENDOR}
     base_prompt=${base_prompt}${p_gitbranch}
     base_prompt=${base_prompt}${p_pwd}
