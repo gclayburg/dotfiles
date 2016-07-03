@@ -401,6 +401,11 @@ if [ "$PS1" ]; then
             COREOSDETAIL="${COREOSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
           fi
         fi
+        if [[ -f /proc/1/sched ]]; then
+          if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
+            DOCKER="[[docker]] "
+          fi
+        fi
         ;;
       SunOS)
         case "`uname -p`" in
