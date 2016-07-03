@@ -147,6 +147,12 @@ case "`uname -s | cut -d_ -f1`" in
           ;;
       esac
     fi
+    if [ -f /proc/1/sched ]; then
+      if [ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]; then
+        DOCKER="[[docker]] "
+      fi
+    fi
+
     ;;
   VMkernel) #VMware ESXi
     HOSTCOLOR=${B_YELLOW_ON_RED}
@@ -202,11 +208,22 @@ case "$0" in
     #man will fail on AIX/ksh if ENV is set
     ENV=$HOME/.profile
 
+    p_git_branch=''
+    git --version > /dev/null 2>&1
+    if [ "$?" -eq "0" ] ; then
+      #only evaluate git branch info if git is installed on this box
+      #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
+      p_git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" ) '
+    fi
     #if we are really running in a dash shell, don't try to colorize the prompt
     if [ -n "$BASH_VERSION" ]; then
-      PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${CHAR:-?} "
+      PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${DOCKER}"
+      PS1=$PS1"${p_git_branch}"
+      PS1=$PS1'$(pwd) '"${CHAR:-?} "
     else
-      PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${CHAR:-?} "
+      PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${DOCKER}"
+      PS1=$PS1"${p_git_branch}"
+      PS1=$PS1'$(pwd) '"${CHAR:-?} "
     fi
     ;;
   *)

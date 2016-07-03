@@ -504,6 +504,9 @@ if [ "$PS1" ]; then
     # sudo bash
     # sudo sh
     # su
+    #
+    # however, exporting PS1 causes issues if you run a bash shell then try to execute /bin/dash, for example.
+    # /bin/dash goes into an infinite loop trying to evaluate our bash PS1
     export PS1
     alias sh="PS1='\$0 $USER@$HOSTNAME \$ ' sh"  # use very minimal prompt for sh subshells
     alias dash="PS1='\$0 $USER@$HOSTNAME \$ ' dash"  # use very minimal prompt for sh subshells
