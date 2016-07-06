@@ -227,6 +227,7 @@ case "$0" in
     fi
     ;;
   *)
+    #i.e.  $0 will be "-su" if you su from root to a user such as jenkins: su - jenkins
     #blindly assume other shells have less installed
     PAGER=less
     #man will fail on AIX/ksh if ENV is set
