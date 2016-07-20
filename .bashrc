@@ -463,7 +463,16 @@ if [ "$PS1" ]; then
     if [[ $(git --version 2> /dev/null) ]]; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
-      p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
+      if [[ -e /etc/bash_completion.d/git-prompt ]]; then
+        . /etc/bash_completion.d/git-prompt
+        p_gitbranch='$(declare -F __git_ps1 &>/dev/null && __git_ps1 "[%s]")'
+      elif [[ -e /etc/bash_completion.d/git ]]; then
+        . /etc/bash_completion.d/git
+        p_gitbranch='$(declare -F __git_ps1 &>/dev/null && __git_ps1 "[%s]")'
+      else
+        //git completion not installed on this box. use this inline method instead to show git branch
+        p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
+      fi
     fi
 
     local p_ending="${OFF}"'\n\$ '
