@@ -112,7 +112,7 @@ RED_ON_BLUE='\033[31;1;44m'
 B_YELLOW_ON_RED='\033[1;41;33m'
 
 COLOR_OFF='\033[00m'
-
+busyboxcheck="unknown"
 case "`uname -s | cut -d_ -f1`" in
   Linux)
 
@@ -203,27 +203,39 @@ case "$0" in
     bash_ksh_prompt
     ;;
   *sh*)
-    #blindly assume other shells have less installed
-    PAGER=less
-    #man will fail on AIX/ksh if ENV is set
-    ENV=$HOME/.profile
 
-    p_git_branch=''
-    git --version > /dev/null 2>&1
-    if [ "$?" -eq "0" ] ; then
-      #only evaluate git branch info if git is installed on this box
-      #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
-      p_git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" ) '
-    fi
-    #if we are really running in a dash shell, don't try to colorize the prompt
-    if [ -n "$BASH_VERSION" ]; then
-      PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${DOCKER}"
-      PS1=$PS1"${p_git_branch}"
-      PS1=$PS1'$(pwd) '"${CHAR:-?} "
+    if [ "$busyboxcheck" == "BusyBox" ]; then #busybox can do color prompts and some special prompt chars like \u \h \w but not late PS1 evaluation - things like '${PWD}'
+      type less > /dev/null 2>&1
+      [ "$?" == "0" ] && PAGER=less || alias less=more
+
+      local xterm_titlebar='\[\e]0;\u@\h:\w\a'
+
+      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\$ "
+#      PS1="($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\$ "
     else
-      PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${DOCKER}"
-      PS1=$PS1"${p_git_branch}"
-      PS1=$PS1'$(pwd) '"${CHAR:-?} "
+
+      #blindly assume other shells have less installed
+      PAGER=less
+      #man will fail on AIX/ksh if ENV is set
+      ENV=$HOME/.profile
+
+      p_git_branch=''
+      git --version > /dev/null 2>&1
+      if [ "$?" -eq "0" ] ; then
+        #only evaluate git branch info if git is installed on this box
+        #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
+        p_git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" ) '
+      fi
+      #if we are really running in a dash shell, don't try to colorize the prompt
+      if [ -n "$BASH_VERSION" ]; then
+        PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${DOCKER}"
+        PS1=$PS1"${p_git_branch}"
+        PS1=$PS1'$(pwd) '"${CHAR:-?} "
+      else
+        PS1="($0) [${MY_USER:-?}@${HOSTNAME}] ${DOCKER}"
+        PS1=$PS1"${p_git_branch}"
+        PS1=$PS1'$(pwd) '"${CHAR:-?} "
+      fi
     fi
     ;;
   *)
