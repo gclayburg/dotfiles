@@ -288,24 +288,25 @@ if [ "$PS1" ]; then
   pushdotfiles(){
     BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
     echo "$1" | grep : > /dev/null
+    USER_SPEC=$1
     if [ "$?" == "0" ]; then # assume $1 is of the form: rbeatty@jaxaf2661:gclaybur/
       USER_DIR="$1"
       USER_SPEC=$(echo "$1" | cut -d: -f1)
       USER_HIJACK=$(echo "$1" | cut -d: -f2)
-      dateeval ssh ${USER_SPEC} "mkdir $USER_HIJACK"
+      dateeval ssh ${USER_SPEC} "[ -d $USER_HIJACK ] || mkdir $USER_HIJACK"
     else  #append : to specify home directory of user on remote host
       USER_DIR="$1":
-    fi
-    #backup any previous dotfiles
-    dateeval ssh $1 "mkdir $BACKUPDIR"
-    sshstatus=$?
+      #backup any previous dotfiles
+      dateeval ssh $1 "mkdir $BACKUPDIR"
+      sshstatus=$?
 
-    if [[ $sshstatus != 0 ]] ; then
-      echo "$1 down?"
-      return $sshstatus
+      if [[ $sshstatus != 0 ]] ; then
+        echo "$1 down?"
+        return $sshstatus
+      fi
+      dateeval ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
+      dateeval ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
     fi
-    dateeval ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
-    dateeval ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
     dateeval scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
 
@@ -470,7 +471,7 @@ if [ "$PS1" ]; then
         . /etc/bash_completion.d/git
         p_gitbranch='$(declare -F __git_ps1 &>/dev/null && __git_ps1 "[%s]")'
       else
-        //git completion not installed on this box. use this inline method instead to show git branch
+        #git completion not installed on this box. use this inline method instead to show git branch
         p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
       fi
     fi

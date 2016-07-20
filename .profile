@@ -155,6 +155,7 @@ case "`uname -s | cut -d_ -f1`" in
 
     ;;
   VMkernel) #VMware ESXi
+    busyboxcheck=`cat --help 2>&1 | head -1 | cut -d" " -f1`
     HOSTCOLOR=${B_YELLOW_ON_RED}
     ;;
 esac
@@ -252,7 +253,7 @@ esac #case "$0"
 export PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH ENV LANG
 
 #ash is too limited to run who or tty commands
-if [  "$0" != "-ash" -a "$0" != "ash" ]; then
+if [  "$0" != "-ash" -a "$0" != "ash" -a "$busyboxcheck" != "BusyBox" ]; then
   #Customized history settings
   TTY=`tty | sed -e 's,.*/,,'`
   HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
