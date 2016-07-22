@@ -287,8 +287,8 @@ if [ "$PS1" ]; then
 
   pushdotfiles(){
     BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
-    echo "$1" | grep : > /dev/null
     USER_SPEC=$1
+    echo "$1" | grep : > /dev/null
     if [ "$?" == "0" ]; then # assume $1 is of the form: rbeatty@jaxaf2661:gclaybur/
       USER_DIR="$1"
       USER_SPEC=$(echo "$1" | cut -d: -f1)
@@ -436,7 +436,7 @@ if [ "$PS1" ]; then
         HOSTCOLOR=${B_DARK_GRAY}
         ;;
     esac
-    local xterm_titlebar='\[\e]0;\u@\h:\w\a'
+    local xterm_titlebar='\[\e]0;\u@\h:\w\a\]'
 
 # if status of last command is non-zero, print it out prominently in yellow on red
     local p_exit_status='$(last_stat=$?;if [ $last_stat -ne 0 ]; then echo "\e[41;1;33m${last_stat}\e[0m "; fi)'
