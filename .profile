@@ -91,7 +91,13 @@ MANPATH=$MANPATH:/usr/local/man:/usr/local/man/man1:/usr/local/man/man3:/usr/loc
 PROFILE=true
 EDITOR=vi
 VISUAL=vi
-LANG=en_US.UTF-8
+
+#older Solaris sometimes does not know about UTF-8 locale
+if `locale -a 2>&1 | grep -i en_US.utf8 1>/dev/null 2>&1`; then
+  LANG=en_US.UTF-8
+else
+  LANG=C
+fi
 
 # Setup PS1 (prompt) for sh and ksh.
 # This prompt also works for a basic, boring bash prompt 
@@ -205,14 +211,16 @@ case "$0" in
     ;;
   *sh*)
 
-    if [ "$busyboxcheck" == "BusyBox" ]; then #busybox can do color prompts and some special prompt chars like \u \h \w but not late PS1 evaluation - things like '${PWD}'
+    if [ "$busyboxcheck" = "BusyBox" ]; then #busybox can do color prompts and some special prompt chars like \u \h \w but not late PS1 evaluation - things like '${PWD}'
       type less > /dev/null 2>&1
       [ "$?" == "0" ] && PAGER=less || alias less=more
 
-      local xterm_titlebar='\[\e]0;\u@\h:\w\a'
+      local xterm_titlebar='\[\e]0;\u@\h:\w\a\]'
 
-      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\$ "
-#      PS1="($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\$ "
+#      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\\$ "
+# ash on busybox gets a little confused when newline is in prompt, so we squeeze it all on one line
+# ash on bysybox needs 2 escapes before $ for it to be displayed as # for root and $ for non-root
+      PS1="${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w \\$ "
     else
 
       #blindly assume other shells have less installed
