@@ -102,10 +102,14 @@ fi
 # Setup PS1 (prompt) for sh and ksh.
 # This prompt also works for a basic, boring bash prompt 
 
-export MY_USER=`whoami`
-#if ( "$?" -ne "0" ) then
-#  USER=`/usr/ucb/whoami`
-#fi
+export MY_USER=$USER
+#$USER might not be the effective user when using "su" on some systems
+#`whoami` and `id` are more accurate, if they are installed
+if `whoami > /dev/null 2>&1`; then
+  MY_USER=`whoami`
+elif `id > /dev/null 2>&1`; then
+  MY_USER=`id | cut -d\( -f2 | cut -d\) -f1`
+fi
 HOSTNAME=`uname -n`
 B_RED='\033[1;31m'
 B_DARK_GRAY='\033[1;30m'
