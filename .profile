@@ -219,8 +219,10 @@ case "$0" in
       type less > /dev/null 2>&1
       [ "$?" == "0" ] && PAGER=less || alias less=more
 
-      local xterm_titlebar='\[\e]0;\u@\h:\w\a\]'
-
+      local xterm_titlebar=''
+      if [ "$TERM" == "xterm" ]; then
+        xterm_titlebar='\[\e]0;\u@\h:\w\a\]'
+      fi
 #      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\\$ "
 # ash on busybox gets a little confused when newline is in prompt, so we squeeze it all on one line
 # ash on bysybox needs 2 escapes before $ for it to be displayed as # for root and $ for non-root
