@@ -169,7 +169,8 @@ case "`uname -s | cut -d_ -f1`" in
     HOSTCOLOR=${B_YELLOW_ON_RED}
     ;;
 esac
-COLORHOSTNAME=${HOSTCOLOR}$HOSTNAME${COLOR_OFF}
+# embed color changes as sequence of non-printing characters - so that long editing commands don't get confused
+COLORHOSTNAME='\['${HOSTCOLOR}'\]'$HOSTNAME'\['${COLOR_OFF}'\]'
 
 case "$MY_USER" in
   root)
