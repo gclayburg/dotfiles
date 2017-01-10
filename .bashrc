@@ -201,6 +201,10 @@ setDirColors(){
   ls --color=tty > /dev/null 2>&1
   if [ "$?" -eq "0" ]; then
     alias ls='ls -F --color=tty'
+    alias grep='grep --colour=auto'
+    alias egrep='egrep --colour=auto'
+    alias fgrep='fgrep --colour=auto'
+
     local MY_BASH=${BASH_SOURCE:-${HOME}/.bashrc}
     local dir=$(dirname "$MY_BASH")
     eval "`dircolors -b ${dir}/.dir_colors  2> /dev/null`"
@@ -230,11 +234,6 @@ if [ "$PS1" ]; then
   alias which='type -a'  # More helpful which
 
   alias ssh='ssh -A'  #single sign-on
-
-  # number of commands to remember in the command history
-  HISTSIZE=10000
-  # The maximum number of commands to remember in the history file
-  HISTFILESIZE=50000
 
   FCEDIT=vi
 
@@ -317,6 +316,18 @@ if [ "$PS1" ]; then
   #allow C-s (forward search to work in shell)
   stty stop undef
 
+  # number of commands to remember in the command history
+  HISTSIZE=100000
+  # The maximum number of commands to remember in the history file
+  HISTFILESIZE=500000
+  # append to the history file, don't overwrite it
+  shopt -s histappend
+#todo incorporate features from /etc/bash/bashrc from coreos
+
+  # Disable completion when the input buffer is empty.  i.e. Hitting tab
+  # and waiting a long time for bash to expand all of $PATH.
+  shopt -s no_empty_cmd_completion
+
   #------------------------------------------------------------------------------------------
   # INCREMENTAL HISTORY SEARCH
   # "Add this to your .bashrc and you will be very happy" by Jeet
@@ -395,14 +406,11 @@ if [ "$PS1" ]; then
           esac
         elif [[ -e /etc/redhat-release ]]; then
           HOSTCOLOR=${B_RED}
-        elif [[ -f /etc/os-release ]]; then
-          #/etc/coreos/update.conf  for channel: alpha,beta,stable
-          CoreOSname=$(grep "^NAME" /etc/os-release | cut -d"=" -f2)
-          if [[ "$CoreOSname" == "CoreOS" ]]; then
+        elif grep "^NAME.*CoreOS.*" /etc/os-release > /dev/null 2>&1 ; then
             HOSTCOLOR=${RED_ON_GRAY}
             COREOSDETAIL=$(grep "^VERSION=" /etc/os-release | cut -d= -f2)
+          #/etc/coreos/update.conf  for channel: alpha,beta,stable
             COREOSDETAIL="${COREOSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
-          fi
         fi
         if [[ -f /proc/1/sched ]]; then
           if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
@@ -534,3 +542,7 @@ if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
 elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
   source ${RUNDIR}/.bashrc.localhost
 fi
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="${RUNDIR}/.sdkman"
+[[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]] && source "${RUNDIR}/.sdkman/bin/sdkman-init.sh"
