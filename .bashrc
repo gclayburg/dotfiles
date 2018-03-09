@@ -390,7 +390,7 @@ if [ "$PS1" ]; then
     case "`uname -s | cut -d_ -f1`" in
       Linux)
         COREOSDETAIL=""
-        HOSTCOLOR=${RED_UNDERLINE}  #default color if lsb_release not installed
+        HOSTCOLOR=${RED_UNDERLINE}  #default color if we can't determine which Linux
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
           case "$LSB_RELEASE" in
@@ -404,6 +404,8 @@ if [ "$PS1" ]; then
               HOSTCOLOR=${RED_ON_BLUE}
               ;;
           esac
+        elif [[ -f /etc/debian_version ]]; then #debian buster/sid is using this, but not lsb_release
+          HOSTCOLOR=${RED_ON_BROWN}
         elif [[ -e /etc/redhat-release ]]; then
           HOSTCOLOR=${B_RED}
         elif grep "^NAME.*CoreOS.*" /etc/os-release > /dev/null 2>&1 ; then
