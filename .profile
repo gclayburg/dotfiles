@@ -220,7 +220,7 @@ case "$0" in
       type less > /dev/null 2>&1
       [ "$?" == "0" ] && PAGER=less || alias less=more
 
-      local xterm_titlebar=''
+      xterm_titlebar=''
       if [ "$TERM" == "xterm" ]; then
         xterm_titlebar='\[\e]0;\u@\h:\w\a\]'
       fi
