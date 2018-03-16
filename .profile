@@ -285,7 +285,7 @@ if [  "$0" != "-ash" -a "$0" != "ash" -a "$busyboxcheck" != "BusyBox" ]; then
 fi
 
 # OS agnostic settings not always safe for Bourne /ash shell
-if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" -a "$0" != "/bin/sh" ]; then
+if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" -a "$0" != "/bin/sh" -a "$0" != "/bin/ash" ]; then
   set -o emacs
 
   #stupid finger patch
