@@ -418,7 +418,12 @@ if [ "$PS1" ]; then
           #/etc/coreos/update.conf  for channel: alpha,beta,stable
             OSDETAIL="${OSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
         elif grep "Buildroot" /etc/os-release >/dev/null 2>&1; then
-           OSDETAIL="Buildroot"
+           OSDETAIL="Buildroot "
+           PRETTY=$(grep "PRETTY_NAME" /etc/os-release >/dev/null 2>&1)
+           if [ "$?" == "0" ]; then
+             eval $PRETTY
+             OSDETAIL="${PRETTY_NAME} "
+           fi
         fi
         if [[ -f /proc/1/sched ]]; then
           if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
