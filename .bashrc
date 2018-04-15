@@ -36,7 +36,7 @@ PAGER=less
 #older Solaris sometimes does not know about UTF-8 locale
 #Buildroot may not even have locale installed
 LANG=C
-if type locale; then
+if type locale >/dev/null 2>&1; then
   if `locale -a | grep -i en_US.utf8 1>/dev/null 2>&1`; then
     LANG=en_US.UTF-8
   fi
