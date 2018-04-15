@@ -553,4 +553,6 @@ fi
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="${RUNDIR}/.sdkman"
-[[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]] && source "${RUNDIR}/.sdkman/bin/sdkman-init.sh"
+if [[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]]; then
+  source "${RUNDIR}/.sdkman/bin/sdkman-init.sh"
+fi
