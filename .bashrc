@@ -34,12 +34,13 @@ VISUAL=vi
 PAGER=less
 
 #older Solaris sometimes does not know about UTF-8 locale
-if `locale -a | grep -i en_US.utf8 1>/dev/null 2>&1`; then
-  LANG=en_US.UTF-8
-else
-  LANG=C
+#Buildroot may not even have locale installed
+LANG=C
+if type locale; then
+  if `locale -a | grep -i en_US.utf8 1>/dev/null 2>&1`; then
+    LANG=en_US.UTF-8
+  fi
 fi
-
 #include (){
 #  if [ -r "$1" ]; then
 #    . "$1" fi
@@ -201,9 +202,12 @@ setDirColors(){
   ls --color=tty > /dev/null 2>&1
   if [ "$?" -eq "0" ]; then
     alias ls='ls -F --color=tty'
-    alias grep='grep --colour=auto'
-    alias egrep='egrep --colour=auto'
-    alias fgrep='fgrep --colour=auto'
+    grep --color=auto doesnotexist /dev/null >/dev/null 2>&1
+    if [ "$?" -eq "1" ]; then  #grep understands --color=tty option
+      alias grep='grep --color=auto'
+      alias egrep='egrep --color=auto'
+      alias fgrep='fgrep --color=auto'
+    fi
 
     local MY_BASH=${BASH_SOURCE:-${HOME}/.bashrc}
     local dir=$(dirname "$MY_BASH")
@@ -389,7 +393,7 @@ if [ "$PS1" ]; then
 
     case "`uname -s | cut -d_ -f1`" in
       Linux)
-        COREOSDETAIL=""
+        OSDETAIL=""
         HOSTCOLOR=${RED_UNDERLINE}  #default color if we can't determine which Linux
         LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
         if [[ ! -z $LSB_RELEASE ]]; then
@@ -410,9 +414,11 @@ if [ "$PS1" ]; then
           HOSTCOLOR=${B_RED}
         elif grep "^NAME.*CoreOS.*" /etc/os-release > /dev/null 2>&1 ; then
             HOSTCOLOR=${RED_ON_GRAY}
-            COREOSDETAIL=$(grep "^VERSION=" /etc/os-release | cut -d= -f2)
+            OSDETAIL=$(grep "^VERSION=" /etc/os-release | cut -d= -f2)
           #/etc/coreos/update.conf  for channel: alpha,beta,stable
-            COREOSDETAIL="${COREOSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
+            OSDETAIL="${OSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
+        elif grep "Buildroot" /etc/os-release >/dev/null 2>&1; then
+           OSDETAIL="Buildroot"
         fi
         if [[ -f /proc/1/sched ]]; then
           if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
@@ -504,7 +510,7 @@ if [ "$PS1" ]; then
     base_prompt=${base_prompt}${p_display}
     base_prompt=${base_prompt}${p_host}
     base_prompt=${base_prompt}${OFF}" "
-    base_prompt=${base_prompt}${COREOSDETAIL}
+    base_prompt=${base_prompt}${OSDETAIL}
     base_prompt=${base_prompt}${DOCKER}
     base_prompt=${base_prompt}${DMI_SYS_VENDOR}
     base_prompt=${base_prompt}${p_gitbranch}
