@@ -419,7 +419,7 @@ if [ "$PS1" ]; then
             OSDETAIL="${OSDETAIL} "$(grep "^GROUP=" /etc/coreos/update.conf | cut -d= -f2)" "
         elif grep "Buildroot" /etc/os-release >/dev/null 2>&1; then
            OSDETAIL="Buildroot "
-           PRETTY=$(grep "PRETTY_NAME" /etc/os-release >/dev/null 2>&1)
+           PRETTY=$(grep "PRETTY_NAME" /etc/os-release 2>&1)
            if [ "$?" == "0" ]; then
              eval $PRETTY
              OSDETAIL="${PRETTY_NAME} "
