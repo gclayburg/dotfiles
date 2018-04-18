@@ -14,14 +14,25 @@ if [ "$?" = "0" ]; then
       go rm $file
     fi
   done
-
-  go curl -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc \
+  if type curl > /dev/null 2>&1; then
+    go curl -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_login \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_logout \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc \
       -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
-  if [ "$?" = "0" ]; then
+      COPY_STATUS=$?
+  else
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_login
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_logout
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
+    COPY_STATUS=$?
+  fi
+
+  if [ "$COPY_STATUS" = "0" ]; then
     echo
     echo
     echo "dotfiles were successfully installed.  To use them, login to this box again or execute \". .bashrc\" "
