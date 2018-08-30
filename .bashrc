@@ -98,6 +98,9 @@ case "`uname -s | cut -d_ -f1`" in
     alias dit="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz images -t"
     alias drm='docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null'
     alias drmi='docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null'
+    if type bat >/dev/null 2>&1; then
+      alias cat=bat
+    fi
     ;;
   SunOS)
     PATH=${PATH}:\
