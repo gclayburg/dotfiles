@@ -329,6 +329,8 @@ if [ "$PS1" ]; then
   HISTFILESIZE=500000
   # append to the history file, don't overwrite it
   shopt -s histappend
+
+  HISTCONTROL=ignoreboth
 #todo incorporate features from /etc/bash/bashrc from coreos
 
   # Disable completion when the input buffer is empty.  i.e. Hitting tab
@@ -428,9 +430,17 @@ if [ "$PS1" ]; then
              OSDETAIL="${PRETTY_NAME} "
            fi
         fi
+        DOCKER=""
         if [[ -f /proc/1/sched ]]; then
           if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
             DOCKER="[[docker]] "
+          fi
+        fi
+        if [[ -z "${DOCKER}" && -f /proc/self/cgroup ]]; then
+          if grep "docker" /proc/self/cgroup > /dev/null 2>&1; then
+            DOCKER="[[docker]] "
+          elif grep "kubepod" /proc/self/cgroup > /dev/null 2>&1; then
+            DOCKER="[[kube]] "
           fi
         fi
         ;;
@@ -564,3 +574,13 @@ export SDKMAN_DIR="${RUNDIR}/.sdkman"
 if [[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]]; then
   source "${RUNDIR}/.sdkman/bin/sdkman-init.sh"
 fi
+
+# if fzf is installed from git into .fzf then use it.
+# see https://github.com/junegunn/fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# if fzf is installed on this box using a package manager like apt we want it:
+[ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+
+[ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
+
