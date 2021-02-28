@@ -26,7 +26,7 @@ $PATH
 
 LD_LIBRARY_PATH=/usr/lib
 export LD_LIBRARY_PATH
-
+export TZ="America/Denver"
 MANPATH=/usr/share/man
 PROFILE=true
 EDITOR=vi
