@@ -330,7 +330,7 @@ if [ "$PS1" ]; then
   # append to the history file, don't overwrite it
   shopt -s histappend
 
-  HISTCONTROL=ignoreboth
+  HISTCONTROL=ignoredups
 #todo incorporate features from /etc/bash/bashrc from coreos
 
   # Disable completion when the input buffer is empty.  i.e. Hitting tab
@@ -584,3 +584,6 @@ fi
 
 [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
 
+# use forgit for interactive git
+# https://github.com/wfxr/forgit
+[ -f ${RUNDIR}/dev/forgit/forgit.plugin.sh ] && source ${RUNDIR}/dev/forgit/forgit.plugin.sh
