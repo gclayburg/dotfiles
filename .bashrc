@@ -562,13 +562,6 @@ if [ "$PS1" ]; then
 fi 
 #echo "exit .bashrc"
 
-#localhost overrides
-if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
-  source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
-elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
-  source ${RUNDIR}/.bashrc.localhost
-fi
-
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="${RUNDIR}/.sdkman"
 if [[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]]; then
@@ -587,3 +580,11 @@ fi
 # use forgit for interactive git
 # https://github.com/wfxr/forgit
 [ -f ${RUNDIR}/dev/forgit/forgit.plugin.sh ] && source ${RUNDIR}/dev/forgit/forgit.plugin.sh
+
+#localhost overrides
+if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
+  source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
+elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
+  source ${RUNDIR}/.bashrc.localhost
+fi
+
