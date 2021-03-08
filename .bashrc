@@ -184,7 +184,6 @@ case "$(uname -s | cut -d_ -f1)" in
       export ANT_HOME=/opt/apache-ant-1.7.1
     fi
     PATH=${PATH}:${ANT_HOME}/bin
-    CATALINA_HOME=
 
     ulimit -d unlimited
 
@@ -402,7 +401,7 @@ if [ "$PS1" ]; then
     local HOSTCOLOR
 
 
-    case "`uname -s | cut -d_ -f1`" in
+    case "$(uname -s | cut -d_ -f1)" in
       Linux)
         OSDETAIL=""
         HOSTCOLOR=${RED_UNDERLINE}  #default color if we can't determine which Linux
@@ -501,7 +500,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if [[ $(git --version 2> /dev/null) ]]; then
+    if git --version > /dev/null 2&>1 ; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       if [[ -e /etc/bash_completion.d/git-prompt ]]; then
