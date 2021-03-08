@@ -587,10 +587,10 @@ function loadfzfextras {
   [ -f ${RUNDIR}/dev/forgit/forgit.plugin.sh ] && source ${RUNDIR}/dev/forgit/forgit.plugin.sh
 }
 
-if [[ -f ~/.fzf.bash ]]; then
+if [[ -f ${RUNDIR}/.fzf.bash ]]; then
   # if fzf is installed from git into .fzf then use it.
   # see https://github.com/junegunn/fzf
-  source ~/.fzf.bash
+  source ${RUNDIR}/.fzf.bash
   loadfzfextras
 elif [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
 # if fzf is installed on this box using a package manager like apt we want it:
