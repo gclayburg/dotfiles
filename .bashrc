@@ -251,7 +251,7 @@ if [ "$PS1" ]; then
     echo "install my public key into the gclaybur user on host ogre:"
     echo "  installid gclaybur@ogre"
     echo
-    echo "install my public key into the $USER user on host evans.example.com:"
+    echo "install my public key into the \$USER user on host evans.example.com:"
     echo "  installid evans.example.com"
     }
 
@@ -280,9 +280,9 @@ if [ "$PS1" ]; then
     else
       ASSIMILATED_HOSTS="$HOME/.ssh/assimilated_hosts"
       if [[ ! (-f ${ASSIMILATED_HOSTS}) ]]; then
-        echo "# This is a generated list of known places where this user can login with public key\n" >> ${ASSIMILATED_HOSTS}
+        echo "# This is a generated list of known places where this user can login with public key" >> "${ASSIMILATED_HOSTS}"
       fi
-      echo "$1" >> ${ASSIMILATED_HOSTS};
+      echo "$1" >> "${ASSIMILATED_HOSTS}";
     fi
   }
 
@@ -292,26 +292,35 @@ if [ "$PS1" ]; then
   }
 
   pushdotfiles(){
+    # this is a push equivalent of installing these dotfiles via pull: curl -L http://bit.ly/universaldotfiles | bash
+    # usage for host bayard and user gclaybur:
+    # pushdotfiles bayard:tmpgclaybur
+    # pushdotfiles gclaybur@bayard:tmpgclayburdotfiles
+    # pushdotfiles bayard
+    # pushdotfiles someotheruser@bayard
     BACKUPDIR=.dotfiles.backedup.$(date "+%Y-%m-%d_%H-%M-%S")
     USER_SPEC=$1
-    echo "$1" | grep : > /dev/null
-    if [ "$?" == "0" ]; then # assume $1 is of the form: rbeatty@jaxaf2661:gclaybur/
+    if echo "$1" | grep : > /dev/null ; then # assume $1 is of the form: someuser@jaxaf2661:tmpdontoverwritesomeuserdotfiles/
       USER_DIR="$1"
       USER_SPEC=$(echo "$1" | cut -d: -f1)
       USER_HIJACK=$(echo "$1" | cut -d: -f2)
-      dateeval ssh ${USER_SPEC} "[ -d $USER_HIJACK ] || mkdir $USER_HIJACK"
+      dateeval ssh "${USER_SPEC}" \""[ -d $USER_HIJACK ] || mkdir $USER_HIJACK"\"
+      sshstatus=$?
+      if [[ $sshstatus != 0 ]] ; then
+        return $sshstatus
+      fi
+
     else  #append : to specify home directory of user on remote host
       USER_DIR="$1":
       #backup any previous dotfiles
-      dateeval ssh $1 "mkdir $BACKUPDIR"
+      dateeval ssh "$1" "mkdir $BACKUPDIR"
       sshstatus=$?
 
       if [[ $sshstatus != 0 ]] ; then
-        echo "$1 down?"
         return $sshstatus
       fi
-      dateeval ssh $1 "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
-      dateeval ssh $1 "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
+      dateeval ssh "$1" "cp -p .bash\* .prof\* .dir_colors .inputrc ${BACKUPDIR}/ 2>/dev/null"
+      dateeval ssh "$1" "rm .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc 2>/dev/null"
     fi
     dateeval scp -rp .bash_login .bash_logout .bashrc .profile .dir_colors .inputrc "${USER_DIR}"
   }
