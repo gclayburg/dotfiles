@@ -4,7 +4,7 @@
 
 #RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
 RUNDIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$HOME}" )" && pwd )"
-UNQUALIFIED_HOSTNAME=$(echo $HOSTNAME | cut -d. -f1)
+UNQUALIFIED_HOSTNAME=$(echo "$HOSTNAME" | cut -d. -f1)
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -37,7 +37,7 @@ PAGER=less
 #Buildroot may not even have locale installed
 LANG=C
 if type locale >/dev/null 2>&1; then
-  if `locale -a | grep -i en_US.utf8 1>/dev/null 2>&1`; then
+  if locale -a | grep -i en_US.utf8 >/dev/null 2>&1; then
     LANG=en_US.UTF-8
   fi
 fi
@@ -47,7 +47,7 @@ fi
 #}
 
 
-case "`uname -s | cut -d_ -f1`" in
+case "$(uname -s | cut -d_ -f1)" in
   Linux)
     if [[ -d /usr/X11R6/man ]]; then
       MANPATH=${MANPATH}:/usr/X11R6/man
@@ -202,8 +202,7 @@ esac
 
 setDirColors(){
   #use color ls when available, i.e. linux/cygwin, others?
-  ls --color=tty > /dev/null 2>&1
-  if [ "$?" -eq "0" ]; then
+  if ls --color=tty > /dev/null 2>&1 ; then
     alias ls='ls -F --color=tty'
     grep --color=auto doesnotexist /dev/null >/dev/null 2>&1
     if [ "$?" -eq "1" ]; then  #grep understands --color=tty option
@@ -212,9 +211,7 @@ setDirColors(){
       alias fgrep='fgrep --color=auto'
     fi
 
-    local MY_BASH=${BASH_SOURCE:-${HOME}/.bashrc}
-    local dir=$(dirname "$MY_BASH")
-    eval "`dircolors -b ${dir}/.dir_colors  2> /dev/null`"
+    eval "$(dircolors -b "${RUNDIR}/.dir_colors"  2> /dev/null)"
   fi
 }
 setDirColors
