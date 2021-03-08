@@ -559,7 +559,7 @@ if [ "$PS1" ]; then
   }
   setPrompt
   unset -f setPrompt
-fi 
+fi # if $PS1
 #echo "exit .bashrc"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
@@ -576,6 +576,14 @@ fi
 [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
 
 [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
+
+# Select a running docker container to exec a shell
+function dexec() {
+  local cid
+  cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
+
+  [ -n "$cid" ] && docker exec -it "$cid" /bin/bash
+}
 
 # use forgit for interactive git
 # https://github.com/wfxr/forgit
