@@ -500,7 +500,7 @@ if [ "$PS1" ]; then
 
     # " (master)", when in git master branch
     local p_gitbranch=""
-    if git --version > /dev/null 2&>1 ; then
+    if git --version > /dev/null 2>&1 ; then
       #only evaluate git branch info if git is installed on this box
       #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
       if [[ -e /etc/bash_completion.d/git-prompt ]]; then
