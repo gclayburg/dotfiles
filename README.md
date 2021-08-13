@@ -8,7 +8,7 @@ universal Linux/Unix dotfiles for the HOME directory of any user
 2. execute this command
 
 ```
-$ curl -L http://bit.ly/universaldotfiles | bash
+$ curl -L http://bit.ly/gclayburgdotfiles | bash
 ```
 
 
@@ -95,7 +95,7 @@ If these files are used on a Windows system running cygwin, it will attempt to s
 The simplest way to install this:
 
 ```shell
-$ curl  https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/universal-install.sh | bash
+$ curl  https://raw.githubusercontent.com/gclayburg/dotfiles/master/universal-install.sh | bash
 ```
 
 This install method is just a convienent way to install these files into a home directory of an internet connected system.  Usually, this command can be copied and pasted, as necessary.  If your system does not have curl installed, you can just manually copy files in this repository to your HOME directory.
@@ -112,40 +112,40 @@ Your prompt should change to look something like the screenshots below
 
 Basic prompt for user "gclaybur" on host "cinnamon":
 
-![plain terminal](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-plain.png)
+![plain terminal](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-plain.png)
 
 Error code shows up in the prompt:
-![last command with error code](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-errorcode.png)
+![last command with error code](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-errorcode.png)
 
 The current directory is a git master branch:
 
-![git branch](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-gitbranch.png)
+![git branch](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-gitbranch.png)
 
 If you use pushd/popd commands, the directory stack is shown:
 
-![pushd directory](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-pushd.png)
+![pushd directory](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-pushd.png)
 
 This box is running Linux mint
 
-![mint host](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-mint-host.png)
+![mint host](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-mint-host.png)
 
 This box is running Solaris 5.9 on sparc:
 
-![solaris-sparc](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-solaris.png)
+![solaris-sparc](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-solaris.png)
 
 Ubuntu:
 
-![ubuntu](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-ubuntu.png)
+![ubuntu](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-ubuntu.png)
 
 CentOS:
 
-![ubuntu](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-centos.png)
+![ubuntu](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-centos.png)
 
 In general, Linux hosts use red for the hostname.  The background color of the hostname represents the linux distribution.
 
 When this prompt is used as the root user, much of the prompt is shown in red instead of green.  This is just another visual reminder that you are root here.  Be careful.
 
-![root](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-root.png)
+![root](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-root.png)
 
 
 
@@ -158,10 +158,10 @@ My normal workflow for working with a new user account on a system is like this:
 > Note: The .bashrc file has a special section when being used on Cygwin.  It will start up ssh-agent the first time a terminal window is opened after logging on to windows.  This will allow the user to authenticate and load the ssh private keys into the agent so that we can use ssh single sign-on to other known hosts.  This ssh-agent setup is not done by these dotfiles under any other system.  It is not necessary since it is normally part of the linux desktop login process.  Cygwin is just, well, weird.
 
 2. Use *installid* function to enable single sign-on and *pushdotfiles* to copy these dotfiles:
-![installid thenewguy@bagley  ; pushdotfiles thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-thenewguy.png)
+![installid thenewguy@bagley  ; pushdotfiles thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-thenewguy.png)
 
 3. Now we can securely log into the server with a consistent environment without needing a password:
-![ssh thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-login-thenewguy.png)
+![ssh thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-login-thenewguy.png)
 
 When I say securely log in, what I mean is that we are using ssh-agent to protect our private ssh keys.  We only need to generate the public/private keypair one time.  Normally, this is only done on the workstation that we are physically sitting at.  For me, this is my laptop.  No other user accounts or servers need a private key.  What we are doing here is just copying our one public key to all our user accounts that we need to use.  By doing this, we are telling sshd on the other end to trust anyone that can authenticate with the one matching private key.  This private key only resides on the laptop.
 
@@ -176,7 +176,7 @@ This enables forwarding of the ssh-agent connection.  I use it because it makes 
 
 One other thing to point out is that if you are logged onto a server using ssh keys and ssh agent forwarding as above, you will see the list of available keys in the prompt like this:
 
-![ssh thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/images/screenshot-nopassword.png)
+![ssh thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-nopassword.png)
 
 
 

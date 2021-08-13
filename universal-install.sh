@@ -15,20 +15,20 @@ if [ "$?" = "0" ]; then
     fi
   done
   if type curl > /dev/null 2>&1; then
-    go curl -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc \
-      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_login \
-      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_logout \
-      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile \
-      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc \
-      -O https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
+    go curl -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bashrc \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bash_login \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bash_logout \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.profile \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.inputrc \
+      -O https://raw.githubusercontent.com/gclayburg/dotfiles/master/.dir_colors
       COPY_STATUS=$?
   else
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bashrc
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_login
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.bash_logout
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.profile
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.inputrc
-    wget https://raw.githubusercontent.com/gclayburg/dotfiles-universal/master/.dir_colors
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bashrc
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bash_login
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.bash_logout
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.profile
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.inputrc
+    wget https://raw.githubusercontent.com/gclayburg/dotfiles/master/.dir_colors
     COPY_STATUS=$?
   fi
 
