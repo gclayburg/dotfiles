@@ -3,7 +3,7 @@ dotfiles-universal
 
 universal Linux/Unix dotfiles for the HOME directory of any user
 
-##quick install
+## quick install
 1. login to any unix or linux account
 2. execute this command
 
@@ -13,7 +13,7 @@ $ curl -L http://bit.ly/gclayburgdotfiles | bash
 
 
 
-#Motivation
+# Motivation
 
 I've been doing consulting for quite a while with both big and small companies.  I've worked thousands of unix and linux systems of all kinds.  Sometimes I'm working as a developer, sometimes I'm working as an Administrator that needs root access for a good part of the day.  
 
@@ -34,7 +34,7 @@ The problem you run into when working on diverse systems is that each system is 
 All of these things can be manually fixed by editing individual .bashrc or .profile files.  This gets cumbersome when dealing with many systems.  
 
 This set of dotfiles is meant to fix all these problems in a consistent way.  
-##Compatibility
+## Compatibility
 These files are known to work on a variety of unix or linux systems.  It has been tested on the HOME directory for users on:
 
 * CentOS
@@ -50,7 +50,7 @@ These files are known to work on a variety of unix or linux systems.  It has bee
 * VMware ESXi
 * Synology Diskstation
 
-####Shells:
+#### Shells:
 * bash 2.x
 * bash 3.x
 * bash 4.x
@@ -60,7 +60,7 @@ These files are known to work on a variety of unix or linux systems.  It has bee
 * dash
 * any other shell that understands .profile or .bashrc
 
-####Terminals
+#### Terminals
 * gnome-terminal
 * rxvt
 * mintty
@@ -70,7 +70,7 @@ These files are known to work on a variety of unix or linux systems.  It has bee
 
 In addition to these, it will probably work just fine with any terminal emulation program.  The various color combinations of the prompt seem to work best when the window background is either white or black.
 
-##PS1 Prompt
+## PS1 Prompt
 
 It creates a PS1 prompt to answer the question, where am I?
 
@@ -90,7 +90,7 @@ It installs a reasonable PATH, based on the OS type
 
 If these files are used on a Windows system running cygwin, it will attempt to start up ssh-agent to allow single sign-on to other systems
 
-##Installing and quick-start tutorial
+## Installing and quick-start tutorial
 
 The simplest way to install this:
 
@@ -108,7 +108,7 @@ gclaybur@localhost ~ $ . .bashrc
 
 Your prompt should change to look something like the screenshots below
 
-#Screenshots
+# Screenshots
 
 Basic prompt for user "gclaybur" on host "cinnamon":
 
@@ -149,7 +149,7 @@ When this prompt is used as the root user, much of the prompt is shown in red in
 
 
 
-##Workflow and Security
+## Workflow and Security
 
 My normal workflow for working with a new user account on a system is like this:
 
@@ -166,7 +166,7 @@ My normal workflow for working with a new user account on a system is like this:
 When I say securely log in, what I mean is that we are using ssh-agent to protect our private ssh keys.  We only need to generate the public/private keypair one time.  Normally, this is only done on the workstation that we are physically sitting at.  For me, this is my laptop.  No other user accounts or servers need a private key.  What we are doing here is just copying our one public key to all our user accounts that we need to use.  By doing this, we are telling sshd on the other end to trust anyone that can authenticate with the one matching private key.  This private key only resides on the laptop.
 
 
-###SSH agent forwarding
+### SSH agent forwarding
 One thing to be aware of is this alias in .bashrc:
 
 ```
@@ -179,6 +179,5 @@ One other thing to point out is that if you are logged onto a server using ssh k
 ![ssh thenewguy@bagley](https://raw.githubusercontent.com/gclayburg/dotfiles/master/images/screenshot-nopassword.png)
 
 
-
-#Customizing
+# Customizing
 This set of dotfiles are meant to be interoperable with any platform.  If you need specific customizations for a particular host, they should be put in a *.bashrc.localhost file*.  This file is sourced last during the login process so you can override any settings you need to.  This will allow you to upgrade to new dotfiles as necessary without needing to re-customize local settings.
