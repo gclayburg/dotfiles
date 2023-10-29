@@ -586,13 +586,13 @@ elif [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
 fi
 unset -f loadfzfextras
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 #localhost overrides
 if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
   source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
 elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
   source ${RUNDIR}/.bashrc.localhost
 fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
