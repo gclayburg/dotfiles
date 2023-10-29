@@ -53,27 +53,7 @@ case "$(uname -s | cut -d_ -f1)" in
       MANPATH=${MANPATH}:/usr/X11R6/man
     fi
     export PATH MANPATH
-    #Opinionated JAVA_HOME finder
-    #Don't rely on someone having setup /etc/alternatives.
-    # We prefer Sun/Oracle JVM for greatest compatibility, if installed
-#    if [[ -d /usr/java/latest/ ]]; then #rpm style
-#      JAVA_HOME=${JAVA_HOME:-/usr/java/latest/}
-#    elif [[ -d /usr/lib/jvm/java-8-oracle/ ]]; then #deb style
-#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-8-oracle/}
-#    elif [[ -d /usr/lib/jvm/java-7-oracle/ ]]; then
-#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-7-oracle/}
-#    elif [[ -d /usr/lib/jvm/default-java/ ]]; then
-#      JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/default-java/}
-#    fi
 
-    #build JAVA_HOME from javac:
-    if [[ -e /usr/bin/javac ]]; then
-      JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
-    fi
-    if [[ -n "$JAVA_HOME" ]]; then
-      export JAVA_HOME
-      PATH=${JAVA_HOME}/bin:$PATH
-    fi
     if [[ -d /usr/X11R6/bin/ ]]; then  #X programs on older systems
       PATH=${PATH}:/usr/X11R6/bin/
     fi
@@ -99,7 +79,11 @@ case "$(uname -s | cut -d_ -f1)" in
     alias drm='docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null'
     alias drmi='docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null'
     if type bat >/dev/null 2>&1; then
+    # bat is a much better cat https://github.com/sharkdp/bat
       alias cat=bat
+    elif type batcat >/dev/null 2>&1; then
+      #/usr/bin/bat exe in ubuntu bat package conflicts with another package so it might be installed as batcat
+      alias cat=batcat
     fi
     ;;
   SunOS)
@@ -609,3 +593,6 @@ elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
   source ${RUNDIR}/.bashrc.localhost
 fi
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
