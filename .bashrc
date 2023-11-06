@@ -1,6 +1,14 @@
 ## Make sure ENV settings are set for each bash subshell
 #set -x
-#echo "enter .bashrc "
+#echo "enter .bashrc with PATH $PATH"
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+
 
 #RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
 RUNDIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$HOME}" )" && pwd )"
@@ -12,17 +20,26 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # OS/shell common settings
-# some systems do not put directories like /usr/sbin in the PATH.  Here,
-# we just add everything.  Some directories in PATH may be duplicated.
-PATH=/usr/bin:\
-/bin:\
-/usr/sbin:\
-/sbin:\
-/etc:\
-/usr/local/bin:\
-$HOME/bin:\
-.:\
-$PATH
+# some older systems do not put directories like /usr/sbin in the PATH.
+# we want to add these only if they do not already exist in PATH
+# otherwise, each subshell will create more duplicate entries in PATH
+# these dups can confuse some interactive tools like nvm that also manipulate PATH
+
+#add PATH entires to front of PATH, no dups
+for pathentry in /usr/bin /bin /usr/sbin /sbin /usr/local/bin $HOME/bin; do
+  case ":$PATH:" in
+    *":$pathentry:"*) :;; # do nothing, already there
+    *) PATH="$pathentry:$PATH";;
+  esac
+done
+
+#add PATH entries to end of PATH, no dups
+for pathentry in .; do
+  case ":$PATH:" in
+    *":$pathentry:"*) :;; # do nothing, already there
+    *) PATH="$PATH:$pathentry";;
+  esac
+done
 
 LD_LIBRARY_PATH=/usr/lib
 export LD_LIBRARY_PATH
