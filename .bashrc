@@ -26,7 +26,7 @@ fi
 # these dups can confuse some interactive tools like nvm that also manipulate PATH
 
 #add PATH entires to front of PATH, no dups
-for pathentry in /usr/bin /bin /usr/sbin /sbin /usr/local/bin $HOME/bin; do
+for pathentry in /usr/bin /bin /usr/sbin /sbin /usr/local/bin $HOME/bin /home/$HOME/.local/bin; do
   case ":$PATH:" in
     *":$pathentry:"*) :;; # do nothing, already there
     *) PATH="$pathentry:$PATH";;
