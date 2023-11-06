@@ -1,6 +1,6 @@
 ## Make sure ENV settings are set for each bash subshell
 #set -x
-#echo "enter .bashrc with PATH $PATH"
+echo "enter .bashrc with PATH $(echo $PATH | tr ':' '\n')"
 
 # If not running interactively, don't do anything
 case $- in
@@ -26,7 +26,7 @@ fi
 # these dups can confuse some interactive tools like nvm that also manipulate PATH
 
 #add PATH entires to front of PATH, no dups
-for pathentry in /usr/bin /bin /usr/sbin /sbin /usr/local/bin $HOME/bin /home/$HOME/.local/bin; do
+for pathentry in $HOME/.local/bin $HOME/bin /usr/local/bin /sbin /usr/sbin /usr/bin /bin; do
   case ":$PATH:" in
     *":$pathentry:"*) :;; # do nothing, already there
     *) PATH="$pathentry:$PATH";;
