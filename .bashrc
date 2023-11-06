@@ -1,6 +1,6 @@
 ## Make sure ENV settings are set for each bash subshell
 #set -x
-echo "enter .bashrc with PATH $(echo $PATH | tr ':' '\n')"
+#echo "enter .bashrc with PATH $(echo $PATH | tr ':' '\n')"
 
 # If not running interactively, don't do anything
 case $- in
