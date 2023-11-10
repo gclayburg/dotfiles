@@ -575,12 +575,21 @@ if [[ -s "${RUNDIR}/.sdkman/bin/sdkman-init.sh" ]]; then
 fi
 
 function loadfzfextras {
-  function dexec() {
-    # Select a running docker container to exec a shell
-    local cid
-    cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
-  
-    [ -n "$cid" ] && docker exec -it "$cid" /bin/bash
+  function de() {
+    if docker --version > /dev/null 2>&1 ; then
+      # Select a running docker container to exec a shell
+      local cid
+      cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
+      if [ -n "$cid" ]; then
+        echo "docker exec -it $cid /bin/bash"
+        if ! docker exec -it "$cid" /bin/bash; then
+          echo "docker exec -it $cid /bin/sh"
+          docker exec -it "$cid" /bin/sh
+        fi
+      fi
+    else
+      echo "docker not installed"
+    fi
   }
   
   # use forgit for interactive git
