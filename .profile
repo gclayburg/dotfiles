@@ -267,23 +267,6 @@ esac #case "$0"
 
 export PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH ENV LANG
 
-#ash is too limited to run who or tty commands
-if [  "$0" != "-ash" -a "$0" != "ash" -a "$busyboxcheck" != "BusyBox" ]; then
-  #Customized history settings
-  TTY=`tty | sed -e 's,.*/,,'`
-  HISTFILE=$HOME/tmp/.ksh.history".${TTY}"
-  HISTSIZE=1000
-  FCEDIT=vi
-  export FCEDIT HISTFILE HISTSIZE
-
-  if [ -t 0 ]; then #we have tty, do interactive settings
-    TT=$(tty | cut -d\/ -f3-)
-    IP=$(who | grep $TT | sed -e 's,.*(,,' | cut -d\) -f1)
-    #attempt to construct a DISPLAY from incoming connection, if not set already
-    export DISPLAY=${DISPLAY:-"${IP}:0.0"}
-  fi
-fi
-
 # OS agnostic settings not always safe for Bourne /ash shell
 if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" -a "$0" != "/bin/sh" -a "$0" != "/bin/ash" ]; then
   set -o emacs
