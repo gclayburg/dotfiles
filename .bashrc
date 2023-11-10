@@ -436,12 +436,31 @@ if [ "$PS1" ]; then
              OSDETAIL="${PRETTY_NAME} "
            fi
         fi
+
+# gitpod /workspace/policyStart (master) $ head -1 /proc/1/sched
+# supervisor (1, #threads: 11)
+
+# ubuntu 18 or 22:
+#$ head -1 /proc/1/sched
+#systemd (1, #threads: 1)
+
+# non systemd linux:
+#$ head -1 /proc/1/sched
+# init (1, #threads: 1)
+
+# existing mongo container:
+# $ docker exec 08728e19e701 head -1 /proc/1/sched
+# mongod (1, #threads: 35)
         DOCKER=""
         if [[ -f /proc/1/sched ]]; then
-          if [[ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]]; then
-            DOCKER="[[docker]] "
+          # do nothing if we are reasonably certain we are not in docker, i.e. a regular init or systemd linux
+          local schedpid1=$(head -1 /proc/1/sched | cut -d' ' -f1)
+          if [[ "${schedpid1}" != "init" && "${schedpid1}" != "systemd" ]]; then
+            DOCKER="${BLUE}[[${schedpid1}]]${OFF} "
           fi
         fi
+
+# this docker/kube detection likely doesn't work with newer docker?
         if [[ -z "${DOCKER}" && -f /proc/self/cgroup ]]; then
           if grep "docker" /proc/self/cgroup > /dev/null 2>&1; then
             DOCKER="[[docker]] "
@@ -491,7 +510,10 @@ if [ "$PS1" ]; then
        p_datetime="[\D{%m-%d} \t] "
     fi
 
-    local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
+    local p_display="\u@"  #lets only show DISPLAY on the prompt if it is not simply the default :0
+    if [[ -n "${DISPLAY}" && "${DISPLAY}" != ":0" ]]; then
+      local p_display='${DISPLAY:+$DISPLAY }\u@'  #pad $DISPLAY with one space at the end, if DISPLAY is set
+    fi
     local p_host="${HOSTCOLOR}\h"
 
     #dash shell is confused by DIRSTACK
