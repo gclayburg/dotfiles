@@ -20,11 +20,11 @@ while read -r file; do
     printf 'Installing dotfiles symlink %s\n' "${file}  ${target_file}"
     ln -sf "${file}" "${target_file}"
 
-done <   <(echo .bashrc .profile)
+done <   <(echo -e ".bashrc\n.profile")
 #done < <(find "${dotfiles_source}" -type f)
 
 #on gitpod, this repo will be checked out to /home/gitpod/.dotfiles
 # so this script will create symlinks like this:
-$ ln -sf /home/gitpod/.dotfiles/.bashrc /home/gitpod/.bashrc
-$ ln -sf /home/gitpod/.dotfiles/.profile /home/gitpod/.profile
+# $ ln -sf /home/gitpod/.dotfiles/.bashrc /home/gitpod/.bashrc
+# $ ln -sf /home/gitpod/.dotfiles/.profile /home/gitpod/.profile
 
