@@ -21,6 +21,18 @@
 #  The solution is to always do "su root" or just "su" and then ". /export/home/username/.profile"
 #  if you really want to use sh or ksh.
 
+# gitpod thing
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	    . "$HOME/.bashrc"
+      bashsetup="yes"
+    fi
+fi
+
+if [ -z "$bashsetup" ]; then
+
 PROFILE_HOME=${DOT_HOME:-`dirname "${HOME}/.profile"`}
 export PROFILE_HOME
 #echo ".profile: profile_home is $PROFILE_HOME"
@@ -276,5 +288,5 @@ if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" -a "$0" !=
   alias gerp=grep
   alias grpe=grep
 fi
-
+fi
 #echo "exit .profile "
