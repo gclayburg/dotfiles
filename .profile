@@ -21,7 +21,15 @@
 #  The solution is to always do "su root" or just "su" and then ". /export/home/username/.profile"
 #  if you really want to use sh or ksh.
 
-# gitpod thing
+# gitpod has its own .bash_profile that does 2 interesting things:
+# 1.  sources .profile
+# 2.  changes directory to the checked out workspace.
+# So we need to use their provided .bash_profile.
+# Their standard .profile will also source .bashrc if it exists.
+# So we just try to mimic what they do to fit into this ecosystem.
+# We want to use one standard .profile and .bashrc everywhere
+# On gitpod, we only install .profile and .bashrc - see install.sh
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
@@ -32,6 +40,7 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 if [ -z "$bashsetup" ]; then
+# We are not running bash
 
 PROFILE_HOME=${DOT_HOME:-`dirname "${HOME}/.profile"`}
 export PROFILE_HOME
@@ -170,8 +179,10 @@ case "`uname -s | cut -d_ -f1`" in
       esac
     fi
     if [ -f /proc/1/sched ]; then
-      if [ $(cat /proc/1/sched | head -1 | cut -d\( -f2 | cut -d, -f1 ) -ne 1 ]; then
-        DOCKER="[[docker]] "
+      echo "check for docker"
+      schedpid1=$(head -1 /proc/1/sched | cut -d' ' -f1)
+      if [ "$schedpid1" != "init" ] && [ "$schedpid1" != "systemd" ]; then
+        DOCKER="[[${schedpid1}]] "
       fi
     fi
 
