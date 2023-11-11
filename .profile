@@ -179,7 +179,6 @@ case "`uname -s | cut -d_ -f1`" in
       esac
     fi
     if [ -f /proc/1/sched ]; then
-      echo "check for docker"
       schedpid1=$(head -1 /proc/1/sched | cut -d' ' -f1)
       if [ "$schedpid1" != "init" ] && [ "$schedpid1" != "systemd" ]; then
         DOCKER="[[${schedpid1}]] "
@@ -250,7 +249,7 @@ case "$0" in
 #      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\\$ "
 # ash on busybox gets a little confused when newline is in prompt, so we squeeze it all on one line
 # ash on bysybox needs 2 escapes before $ for it to be displayed as # for root and $ for non-root
-      PS1="${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w \\$ "
+      PS1="${xterm_titlebar}($0) \u@${COLORHOSTNAME} BB ${DOCKER} \w \\$ "
     else
 
       #blindly assume other shells have less installed
