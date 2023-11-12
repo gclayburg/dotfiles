@@ -42,7 +42,7 @@ fi
 if [ -z "$bashsetup" ]; then
 # We are not running bash
 
-PROFILE_HOME=${DOT_HOME:-`dirname "${HOME}/.profile"`}
+PROFILE_HOME=${DOT_HOME:-$(dirname "${HOME}/.profile")}
 export PROFILE_HOME
 #echo ".profile: profile_home is $PROFILE_HOME"
 
@@ -67,10 +67,9 @@ include (){
 }
 
 #OS specific override settings
-MY_HOST=`uname -n`
-case "`uname -s | cut -d_ -f1`" in
+MY_HOST=$(uname -n)
+case "$(uname -s | cut -d_ -f1)" in
   Linux)
-    PATH=/opt/ibm/ldap/V6.2/bin/32:${PATH}
     ;;
   SunOS)
     ;;
@@ -114,7 +113,7 @@ EDITOR=vi
 VISUAL=vi
 
 #older Solaris sometimes does not know about UTF-8 locale
-if `locale -a 2>&1 | grep -i en_US.utf8 1>/dev/null 2>&1`; then
+if locale -a 2>&1 | grep -i en_US.utf8 1>/dev/null 2>&1; then
   LANG=en_US.UTF-8
 else
   LANG=C
@@ -126,12 +125,14 @@ fi
 export MY_USER=$USER
 #$USER might not be the effective user when using "su" on some systems
 #`whoami` and `id` are more accurate, if they are installed
-if `whoami > /dev/null 2>&1`; then
-  MY_USER=`whoami`
-elif `id > /dev/null 2>&1`; then
-  MY_USER=`id | cut -d\( -f2 | cut -d\) -f1`
+if whoami > /dev/null 2>&1; then
+  MY_USER=$(whoami)
+elif id > /dev/null 2>&1; then
+  MY_USER=$(id | cut -d\( -f2 | cut -d\) -f1)
 fi
-HOSTNAME=`uname -n`
+HOSTNAME=$(uname -n)
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
 B_RED='\033[1;31m'
 B_DARK_GRAY='\033[1;30m'
 BLACK_ON_RED='\033[30;1;41m'
@@ -140,16 +141,18 @@ GREEN_ON_BLUE='\033[32;1;44m'
 RED_ON_GREEN='\033[31;1;42m'
 RED_ON_BROWN='\033[31;1;43m'
 RED_ON_BLUE='\033[31;1;44m'
+RED_ON_GRAY='\033[31;1;47m'
 B_YELLOW_ON_RED='\033[1;41;33m'
 
 COLOR_OFF='\033[00m'
 busyboxcheck="unknown"
-case "`uname -s | cut -d_ -f1`" in
+DOCKER=""
+case "$(uname -s | cut -d_ -f1)" in
   Linux)
 
     HOSTCOLOR=${B_DARK_GRAY}  #default color if lsb_release not installed
     LSB_RELEASE=$(lsb_release -i 2> /dev/null | cut -d: -f2 | sed s/'^\t'//)
-    if [ ! -z $LSB_RELEASE ]; then
+    if [ -n "$LSB_RELEASE" ]; then
       case "$LSB_RELEASE" in
         Ubuntu)
           HOSTCOLOR=${RED_ON_BROWN}
@@ -165,16 +168,15 @@ case "`uname -s | cut -d_ -f1`" in
           ;;
       esac
     else
-#      exe=`exec 2>/dev/null; readlink "/proc/$$/exe"`
-#      case "$exe" in
-#        */busybox)
-#          HOSTCOLOR=${CYAN_ON_RED}
-#          ;;
-#      esac
-      busyboxcheck=`cat --help 2>&1 | head -1 | cut -d" " -f1`
+      busyboxcheck=$(cat --help 2>&1 | head -1 | cut -d" " -f1)
       case "$busyboxcheck" in
         BusyBox) #i.e. Synology Diskstation, or any busybox
-          HOSTCOLOR=${CYAN_ON_RED}
+          OSID=""
+          if [ -r /etc/os-release ]; then
+            OSID=$(grep "^ID=" /etc/os-release | cut -d= -f2)
+            BB_DETAIL="BB $OSID"
+          fi
+          HOSTCOLOR=${RED_ON_GRAY}
           ;;
       esac
     fi
@@ -187,21 +189,25 @@ case "`uname -s | cut -d_ -f1`" in
 
     ;;
   VMkernel) #VMware ESXi
-    busyboxcheck=`cat --help 2>&1 | head -1 | cut -d" " -f1`
+    busyboxcheck=$(cat --help 2>&1 | head -1 | cut -d" " -f1)
+    BB_DETAIL="BB ESXi "
     HOSTCOLOR=${B_YELLOW_ON_RED}
     ;;
 esac
-# embed color changes as sequence of non-printing characters - so that long editing commands don't get confused
-COLORHOSTNAME='\['${HOSTCOLOR}'\]'$HOSTNAME'\['${COLOR_OFF}'\]'
 
 case "$MY_USER" in
   root)
     CHAR="#"
+    USERCOLOR=$RED
     ;;
   *)
     CHAR="$"
+    USERCOLOR=$YELLOW
     ;;
 esac
+# embed color changes as sequence of non-printing characters - so that long editing commands don't get confused
+COLORHOSTNAME='\['${HOSTCOLOR}'\]'$HOSTNAME'\['${COLOR_OFF}'\]'
+MY_COLOR_USER='\['${USERCOLOR}'\]'"($0) \u"'\['${COLOR_OFF}'\]'
 
 bash_ksh_prompt(){
 #    echo "TERM is $TERM"
@@ -227,20 +233,36 @@ ${CHAR:-%} '
 case "$0" in
   *ksh*)
     #only set PAGER to less if less is installed
-    whence less > /dev/null 2>&1
-    [ "$?" == "0" ] && PAGER=less || alias less=more
+    if whence less > /dev/null 2>&1; then
+      PAGER=less
+    else
+      alias less=more
+    fi
     bash_ksh_prompt
     ;;
   *bash*)
-    type less > /dev/null 2>&1
-    [ "$?" == "0" ] && PAGER=less || alias less=more
+    if type less > /dev/null 2>&1; then
+      PAGER=less
+    else
+      alias less=more
+    fi
     bash_ksh_prompt
     ;;
   *sh*)
 
+    p_git_branch=''
+    if git --version > /dev/null 2>&1 ; then
+      #only evaluate git branch info if git is installed on this box
+      #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
+      p_git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" ) '
+    fi
+
     if [ "$busyboxcheck" = "BusyBox" ]; then #busybox can do color prompts and some special prompt chars like \u \h \w but not late PS1 evaluation - things like '${PWD}'
-      type less > /dev/null 2>&1
-      [ "$?" == "0" ] && PAGER=less || alias less=more
+      if type less > /dev/null 2>&1; then
+        PAGER=less
+      else
+        alias less=more
+      fi
 
       xterm_titlebar=''
       if [ "$TERM" == "xterm" ]; then
@@ -248,8 +270,9 @@ case "$0" in
       fi
 #      PS1="\n${xterm_titlebar}($0) \u@${COLORHOSTNAME} $busyboxcheck \w\n\\$ "
 # ash on busybox gets a little confused when newline is in prompt, so we squeeze it all on one line
-# ash on bysybox needs 2 escapes before $ for it to be displayed as # for root and $ for non-root
-      PS1="${xterm_titlebar}($0) \u@${COLORHOSTNAME} BB ${DOCKER} \w \\$ "
+# ash on busybox needs 2 escapes before $ for it to be displayed as # for root and $ for non-root
+      PS1="${xterm_titlebar}${MY_COLOR_USER}@${COLORHOSTNAME} ${BB_DETAIL}${DOCKER}${p_git_branch}\w \\$ "
+
     else
 
       #blindly assume other shells have less installed
@@ -257,13 +280,6 @@ case "$0" in
       #man will fail on AIX/ksh if ENV is set
       ENV=$HOME/.profile
 
-      p_git_branch=''
-      git --version > /dev/null 2>&1
-      if [ "$?" -eq "0" ] ; then
-        #only evaluate git branch info if git is installed on this box
-        #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
-        p_git_branch='$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" ) '
-      fi
       #if we are really running in a dash shell, don't try to colorize the prompt
       if [ -n "$BASH_VERSION" ]; then
         PS1="($0) [${MY_USER:-?}@${COLORHOSTNAME}] ${DOCKER}"
@@ -290,7 +306,7 @@ esac #case "$0"
 export PROFILE EDITOR VISUAL PAGER HOSTNAME PATH MANPATH ENV LANG
 
 # OS agnostic settings not always safe for Bourne /ash shell
-if [ "$0" != "sh" -a "$0" != "-sh" -a "$0" != "-ash" -a "$0" != "ash" -a "$0" != "/bin/sh" -a "$0" != "/bin/ash" ]; then
+if [ "$0" != "sh" ] && [ "$0" != "-sh" ] && [ "$0" != "-ash" ] && [ "$0" != "ash" ] && [ "$0" != "/bin/sh" ] && [ "$0" != "/bin/ash" ]; then
   set -o emacs
 
   #stupid finger patch
