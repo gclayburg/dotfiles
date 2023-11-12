@@ -603,10 +603,10 @@ function loadfzfextras {
       local cid
       cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
       if [ -n "$cid" ]; then
-        echo "docker exec -it $cid /bin/bash"
-        if ! docker exec -it "$cid" /bin/bash; then
-          echo "docker exec -it $cid /bin/sh"
-          docker exec -it "$cid" /bin/sh
+        echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/bash"
+        if ! docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/bash; then
+          echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/sh"
+          docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/sh
         fi
       fi
     else
