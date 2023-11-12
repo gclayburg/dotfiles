@@ -174,7 +174,7 @@ case "$(uname -s | cut -d_ -f1)" in
           OSID=""
           if [ -r /etc/os-release ]; then
             OSID=$(grep "^ID=" /etc/os-release | cut -d= -f2)
-            BB_DETAIL="BB $OSID"
+            BB_DETAIL="BB $OSID "
           fi
           HOSTCOLOR=${RED_ON_GRAY}
           ;;
