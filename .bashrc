@@ -585,6 +585,7 @@ if [ "$PS1" ]; then
     alias sh="PS1='\$0 $USER@$HOSTNAME \$ ' sh"  # use very minimal prompt for sh subshells
     alias dash="PS1='\$0 $USER@$HOSTNAME \$ ' dash"  # use very minimal prompt for sh subshells
   }
+  export PROMPT_COMMAND='history -a'
   setPrompt
   unset -f setPrompt
 fi # if $PS1
