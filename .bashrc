@@ -639,6 +639,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+[ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"  #source the cargo/rust env if installed
+
 #localhost overrides
 if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
   source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}

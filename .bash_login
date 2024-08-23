@@ -9,4 +9,6 @@ if [ "`uname -s | cut -d. -f1`" != "CYGWIN_NT-5" ]; then
 # CYGWIN on XP and 2000 will source .bashrc and then source .bash_login
   . .bashrc
 fi
+[ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"  #source the cargo/rust env if installed
+[ -s "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && export PATH="$PATH:$HOME/.local/share/JetBrains/Toolbox/scripts"
 #echo "exit .bash_login"

@@ -315,4 +315,7 @@ if [ "$0" != "sh" ] && [ "$0" != "-sh" ] && [ "$0" != "-ash" ] && [ "$0" != "ash
   alias grpe=grep
 fi
 fi
+[ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"  #source the cargo/rust env if installed
+[ -s "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && export PATH="$PATH:$HOME/.local/share/JetBrains/Toolbox/scripts"
+
 #echo "exit .profile "
