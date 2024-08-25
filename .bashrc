@@ -12,7 +12,6 @@ esac
 
 #RUNDIR=$(dirname "${BASH_SOURCE:-$HOME}")
 RUNDIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$HOME}" )" && pwd )"
-UNQUALIFIED_HOSTNAME=$(echo "$HOSTNAME" | cut -d. -f1)
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -642,6 +641,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"  #source the cargo/rust env if installed
 
 #localhost overrides
+UNQUALIFIED_HOSTNAME=$(echo "$HOSTNAME" | cut -d. -f1)
 if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
   source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
 elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
