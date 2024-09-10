@@ -599,21 +599,28 @@ fi
 function loadfzfextras {
   function de() {
     if docker --version > /dev/null 2>&1 ; then
-      # Select a running docker container to exec a shell
+      # Select a running docker container to exec a shell or run a command
       local cid
       cid=$(docker ps | sed 1d | fzf -q "$1" | awk '{print $1}')
       if [ -n "$cid" ]; then
-        echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/bash"
-        if ! docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/bash; then
-          echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/sh"
-          docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/sh
+        if [ $# -eq 0 ]; then
+          # Original behavior: open an interactive shell
+          echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/bash"
+          if ! docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/bash; then
+            echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid /bin/sh"
+            docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" /bin/sh
+          fi
+        else
+          # Run the specified command in the container
+          echo "docker exec -it --detach-keys='ctrl-z,ctrl-z' $cid $@"
+          docker exec -it --detach-keys='ctrl-z,ctrl-z' "$cid" "$@"
         fi
       fi
     else
       echo "docker not installed"
     fi
   }
-  
+
   # use forgit for interactive git
   # https://github.com/wfxr/forgit
   [ -f ${RUNDIR}/dev/forgit/forgit.plugin.sh ] && source ${RUNDIR}/dev/forgit/forgit.plugin.sh
