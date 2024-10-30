@@ -10,7 +10,8 @@ Coming from IntelliJ IDEA Ultimate with Emacs keybindings, this guide aims to co
 
 ## Configuration Location
 
-These keybindings are saved in `~/.config/Cursor/User/keybindings.json`
+To use these keybindings, just copy the download this [keybindings](https://raw.githubusercontent.com/gclayburg/dotfiles/refs/heads/master/keybindings.json) file from github and copy it to the cursor location.  On linux, this is in `~/.config/Cursor/User/keybindings.json`
+
 
 ## Keybinding Categories
 
