@@ -1,0 +1,401 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+x 8",
+        "command": "workbench.action.splitEditorDown",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+x 9",
+        "command": "workbench.action.splitEditorRight",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "f12",
+        "command": "-editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "-cursor.aichat.toggleChatMode",
+        "when": "(arbitrary function) && (arbitrary function)"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "-acceptSelectedCodeAction",
+        "when": "codeActionMenuVisible"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "-problems.action.showQuickFixes",
+        "when": "problemFocus"
+    },
+    {
+        "key": "ctrl+shift+alt+s",
+        "command": "workbench.action.openSettings"
+    },
+    {
+        "key": "ctrl+,",
+        "command": "-workbench.action.openSettings"
+    },
+    {
+        "key": "ctrl+,",
+        "command": "workbench.action.navigateBack",
+        "when": "canNavigateBack"
+    },
+    {
+        "key": "ctrl+c ctrl+c",
+        "command": "editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "-editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "-undo",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "workbench.action.navigateForward",
+        "when": "canNavigateForward"
+    },
+    {
+        "key": "ctrl+shift+alt+n",
+        "command": "emacs-mcx.addSelectionToNextFindMatch",
+        "when": "editorFocus && !config.emacs-mcx.useMetaPrefixMacCmd"
+    },
+    {
+        "key": "ctrl+shift+alt+n",
+        "command": "emacs-mcx.addSelectionToNextFindMatch",
+        "when": "config.emacs-mcx.useMetaPrefixMacCmd && editorFocus"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "-emacs-mcx.addSelectionToNextFindMatch",
+        "when": "editorFocus && !config.emacs-mcx.useMetaPrefixMacCmd"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "-emacs-mcx.addSelectionToNextFindMatch",
+        "when": "config.emacs-mcx.useMetaPrefixMacCmd && editorFocus"
+    },
+    {
+        "key": "ctrl+shift+alt+p",
+        "command": "emacs-mcx.addSelectionToPreviousFindMatch",
+        "when": "editorFocus && !config.emacs-mcx.useMetaPrefixMacCmd"
+    },
+    {
+        "key": "ctrl+shift+alt+p",
+        "command": "emacs-mcx.addSelectionToPreviousFindMatch",
+        "when": "config.emacs-mcx.useMetaPrefixMacCmd && editorFocus"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "-emacs-mcx.addSelectionToPreviousFindMatch",
+        "when": "editorFocus && !config.emacs-mcx.useMetaPrefixMacCmd"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "-emacs-mcx.addSelectionToPreviousFindMatch",
+        "when": "config.emacs-mcx.useMetaPrefixMacCmd && editorFocus"
+    },
+    {
+        "key": "ctrl+alt+w",
+        "command": "editor.action.smartSelect.expand",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+alt+w",
+        "command": "editor.action.smartSelect.shrink",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+n",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "shift+alt+p",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+f12",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "terminal.active"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "-workbench.action.quit"
+    },
+    {
+        "key": "ctrl+q",
+        "command": "editor.action.showHover",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+/",
+        "command": "references-view.findReferences",
+        "when": "editorHasReferenceProvider"
+    },
+    {
+        "key": "shift+f6",
+        "command": "editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "shift+f6",
+        "command": "debug.renameWatchExpression",
+        "when": "watchExpressionsFocused"
+    },
+    {
+        "key": "shift+f6",
+        "command": "renameFile",
+        "when": "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus"
+    },
+    {
+        "key": "f2",
+        "command": "-renameFile",
+        "when": "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus"
+    },
+    {
+        "key": "f2",
+        "command": "-editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "references-view.next",
+        "when": "reference-list.hasResult && references-view.canNavigate"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "search.action.focusNextSearchResult",
+        "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "goToNextReference",
+        "when": "inReferenceSearchEditor || referenceSearchVisible"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "references-view.prev",
+        "when": "reference-list.hasResult && references-view.canNavigate"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "search.action.focusPreviousSearchResult",
+        "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "goToPreviousReference",
+        "when": "inReferenceSearchEditor || referenceSearchVisible"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "-workbench.action.files.newUntitledFile"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "-emacs-mcx.paredit.killSexp",
+        "when": "config.emacs-mcx.useMetaPrefixMacCmd && editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "-emacs-mcx.paredit.killSexp",
+        "when": "editorTextFocus && !config.emacs-mcx.useMetaPrefixMacCmd"
+    },
+    {
+        "key": "ctrl+s",
+        "command": "-workbench.action.files.save"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "cursorai.action.generateInTerminal",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-cursorai.action.generateInTerminal",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "composer.startComposerPrompt",
+        "when": "composerIsEnabled"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-composer.startComposerPrompt",
+        "when": "composerIsEnabled"
+    },
+    {
+        "key": "alt+k alt+l",
+        "command": "aichat.showchatdropdown"
+    },
+    {
+        "key": "alt+k l",
+        "command": "workbench.action.chat.newChat",
+        "when": "chatIsEnabled && inChat"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-workbench.action.chat.newChat",
+        "when": "chatIsEnabled && inChat"
+    },
+    {
+        "key": "alt+k l",
+        "command": "aichat.newchataction"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-aichat.newchataction"
+    },
+    {
+        "key": "alt+k y",
+        "command": "aichat.insertselectionintochat"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "editor.action.formatDocument.none",
+        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-aichat.showchatdropdown"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "editor.action.formatDocument.none",
+        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "editor.action.formatDocument",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+    },
+    {
+        "key": "alt+k k",
+        "command": "composer.startComposerPrompt",
+        "when": "composerIsEnabled"
+    },
+    {
+        "key": "alt+k k",
+        "command": "cursorai.action.generateInTerminal",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "alt+k k",
+        "command": "aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "tab",
+        "command": "-emacs-mcx.tabToTabStop",
+        "when": "config.emacs-mcx.emacsLikeTab && editorTextFocus && !editorHoverFocused && !editorParameterHintsVisible && !editorReadonly && !editorTabCompletion && !editorTabMovesFocus && !inSnippetMode && !inlineSuggestionVisible && !suggestWidgetVisible"
+    },
+    {
+        "key": "alt+k g",
+        "command": "workbench.action.chat.open"
+    },
+    {
+        "key": "ctrl+alt+i",
+        "command": "-workbench.action.chat.open"
+    },
+    {
+        "key": "ctrl+alt+i",
+        "command": "editor.action.formatSelection",
+        "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+m ctrl+f",
+        "command": "-editor.action.formatSelection",
+        "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "-emacs-mcx.tabToTabStop",
+        "when": "config.emacs-mcx.emacsLikeTab && editorTextFocus && !editorHoverFocused && !editorParameterHintsVisible && !editorReadonly && !editorTabCompletion && !editorTabMovesFocus && !inSnippetMode && !inlineSuggestionVisible && !suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "-tab",
+        "when": "editorTextFocus && !editorReadonly && !editorTabMovesFocus"
+    },
+    {
+        "key": "ctrl+alt+y",
+        "command": "editor.action.formatSelection",
+        "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+d",
+        "command": "editor.action.copyLinesDownAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+h",
+        "command": "workbench.action.previousEditor"
+    },
+    {
+        "key": "ctrl+pageup",
+        "command": "-workbench.action.previousEditor"
+    },
+    {
+        "key": "alt+l",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "ctrl+pagedown",
+        "command": "-workbench.action.nextEditor"
+    },
+    {
+        "key": "alt+k i",
+        "command": "controlPanel.openControlPanel"
+    },
+    {
+        "key": "ctrl+x ctrl+o",
+        "command": "workbench.action.quickOpen",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+alt+v",
+        "command": "editor.action.refactor",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "-editor.action.refactor",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+e",
+        "command": "expandLineSelection",
+        "when": "textInputFocus"
+    },
+    {
+        "key": "alt+k c",
+        "command": "composer.startComposerPrompt",
+        "when": "composerIsEnabled"
+    }
+]
