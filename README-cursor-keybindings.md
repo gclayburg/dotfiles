@@ -80,6 +80,7 @@ All Cursor actions are mapped under the `alt+k` chord to avoid conflicts:
 |------------|---------|
 | `alt+g n` | Go to next problem |
 | `alt+g p` | Go to previous problem |
+| `ctrl+alt+\` | Run test at cursor |
 
 ## Ubuntu Notes
 
@@ -103,3 +104,5 @@ gsettings set org.freedesktop.ibus.panel.emoji hotkey "[]"
 3. Removed/hidden keybindings:
     - `alt+l` (Transform to lowercase) from Awesome Emacs keymap
    
+4. It seems a recent cursor update overrides the mapping of `ctrl+k` again.  Cursor wants to use it for aipopup.action.modal.generate.  We use `alt+k k` for this instead.  So we now have an explicit mapping to disable the cursor mapping of ctrl+k to aipopup.action.modal.generate.
+

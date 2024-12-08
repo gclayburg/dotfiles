@@ -397,5 +397,15 @@
         "key": "alt+k c",
         "command": "composer.startComposerPrompt",
         "when": "composerIsEnabled"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible"
+    },
+    {
+        "key": "ctrl+alt+\\",
+        "command": "testing.runAtCursor",
+        "when": "editorTextFocus"
     }
 ]
