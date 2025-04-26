@@ -394,6 +394,7 @@ if [ "$PS1" ]; then
     local RED_UNDERLINE='\e[4;31m'
     local RED_ON_GREEN='\e[31;1;42m'
     local RED_ON_BROWN='\e[31;1;43m'
+    local B_GREEN_ON_MAGENTA='\e[92;1;45m'
     local  RED_ON_BLUE='\e[31;1;44m'
     local  RED_ON_GRAY='\e[31;1;47m'
     local BLUE_ON_WHITE='\e[47;1;34m'
@@ -409,7 +410,7 @@ if [ "$PS1" ]; then
         if [[ ! -z $LSB_RELEASE ]]; then
           case "$LSB_RELEASE" in
             Ubuntu | LinuxMint | Debian)
-              HOSTCOLOR=${RED_ON_BROWN}
+              HOSTCOLOR=${B_GREEN_ON_MAGENTA}
               ;;
             CentOS | RedHat)
               HOSTCOLOR=${B_RED}
@@ -419,7 +420,7 @@ if [ "$PS1" ]; then
               ;;
           esac
         elif [[ -f /etc/debian_version ]]; then #debian buster/sid is using this, but not lsb_release
-          HOSTCOLOR=${RED_ON_BROWN}
+          HOSTCOLOR=${B_GREEN_ON_MAGENTA}
         elif [[ -e /etc/redhat-release ]]; then
           HOSTCOLOR=${B_RED}
         elif grep "^NAME.*CoreOS.*" /etc/os-release > /dev/null 2>&1 ; then
