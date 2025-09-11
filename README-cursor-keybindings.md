@@ -69,10 +69,12 @@ All Cursor actions are mapped under the `alt+k` chord to avoid conflicts with em
 | Keybinding                  | Action                                                             |
 |-----------------------------|--------------------------------------------------------------------|
 | `alt+k k`                   | Generate code (opens in-editor window) Cursor calls this Command K |
-| `alt+k c` or `ctrl+i`       | Open 'Agent' in chat side window                                   |
-| `alt+k l`                   | Open 'Ask' in chat side window                                     |
+| `alt+k c` or `ctrl+i`       | Open Chat in Agent Mode                                   |
+| `alt+k l`                   | Open Chat in Ask Mode                                     |
+| `alt+k b`                   | Open Chat in Background Mode                              |
 | `alt+k y`                   | Copy selection to 'Ask' chat side window                           |
 | `alt+k c`                   | Copy selection to 'Agent' chat side window                         |
+| `alt+k a`                   | Toggle between Agent and Editor windows (context-dependent)        |
 
 ### Additional VSCode/IntelliJ Shortcuts
 
@@ -88,6 +90,12 @@ To disable Ubuntu's emoji picker on `ctrl+.`, run:
 ```bash
 gsettings set org.freedesktop.ibus.panel.emoji hotkey "[]"
 ```
+
+## Todo
+
+- open chat window 
+--  cursor hover says ctrl-alt-b, but this action does something else with selecting.  we need an alt+k thingy for this
+
 
 ## Known Issues
 
@@ -121,3 +129,8 @@ This version of cursor maps `ctrl+y`  to 'Cursor: Focus Chat Followup'.
 
 ## Updates 2025-9-11
 Cursor 1.6.6 update.  Cursor arbitrarily decides to map `ctrl+e` to 'Open Agent Window' and 'Open Editor Window'.  Of course, this breaks Emacs-MCX: Move End Of Line.  We now remap this action to `alt+k a`
+
+Removed old keybindings that no longer work in cursor:
+| `alt+k g`                   | Open chat window                                                   |  does not work, removed 
+| `alt+k m`                   | Switch to edit mode in composer                                    |  does not work, removed
+| `alt+k n`                   | Open specific AI chat panel                                        |  does not work, removed
