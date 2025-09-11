@@ -174,23 +174,8 @@
     },
     {
         "key": "ctrl+alt+n",
-        "command": "references-view.next",
-        "when": "reference-list.hasResult && references-view.canNavigate"
-    },
-    {
-        "key": "ctrl+alt+n",
-        "command": "search.action.focusNextSearchResult",
-        "when": "hasSearchResult || inSearchEditor"
-    },
-    {
-        "key": "ctrl+alt+n",
         "command": "goToNextReference",
         "when": "inReferenceSearchEditor || referenceSearchVisible"
-    },
-    {
-        "key": "ctrl+alt+p",
-        "command": "references-view.prev",
-        "when": "reference-list.hasResult && references-view.canNavigate"
     },
     {
         "key": "ctrl+alt+p",
@@ -241,18 +226,9 @@
         "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
     },
     {
-        "key": "ctrl+alt+k",
-        "command": "composer.startComposerPrompt",
-        "when": "composerIsEnabled"
-    },
-    {
         "key": "ctrl+k",
         "command": "-composer.startComposerPrompt",
         "when": "composerIsEnabled"
-    },
-    {
-        "key": "alt+k alt+l",
-        "command": "aichat.showchatdropdown"
     },
     {
         "key": "alt+k l",
@@ -294,11 +270,6 @@
         "key": "ctrl+alt+l",
         "command": "editor.action.formatDocument",
         "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
-    },
-    {
-        "key": "alt+k k",
-        "command": "composer.startComposerPrompt",
-        "when": "composerIsEnabled"
     },
     {
         "key": "alt+k k",
@@ -370,10 +341,6 @@
         "command": "-workbench.action.nextEditor"
     },
     {
-        "key": "alt+k i",
-        "command": "controlPanel.openControlPanel"
-    },
-    {
         "key": "ctrl+x ctrl+o",
         "command": "workbench.action.quickOpen",
         "when": "!terminalFocus"
@@ -394,11 +361,6 @@
         "when": "textInputFocus"
     },
     {
-        "key": "alt+k c",
-        "command": "composer.startComposerPrompt",
-        "when": "composerIsEnabled"
-    },
-    {
         "key": "ctrl+k",
         "command": "-aipopup.action.modal.generate",
         "when": "editorFocus && !composerBarIsVisible"
@@ -407,5 +369,118 @@
         "key": "ctrl+alt+\\",
         "command": "testing.runAtCursor",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+;",
+        "command": "-editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "search.action.focusNextSearchResult",
+        "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "ctrl+alt+h",
+        "command": "search.action.focusNextSearchResult",
+        "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "ctrl+alt+m",
+        "command": "references-view.clear"
+    },
+    {
+        "key": "ctrl+shift+alt+w",
+        "command": "workbench.action.openGlobalKeybindings"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "list.focusAnyDown",
+        "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+    },
+    {
+        "key": "ctrl+alt+p",
+        "command": "list.focusAnyUp",
+        "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+    },
+    {
+        "key": "alt+k c",
+        "command": "composer.startComposerPrompt"
+    },
+    {
+        "key": "ctrl+u",
+        "command": "java.action.navigateToSuperImplementation"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "scm.viewPreviousCommit",
+        "when": "scmInputIsInFirstPosition && scmRepository && !suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "-editor.action.selectAll"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "-notebook.cell.output.selectAll",
+        "when": "notebookEditorFocused && notebookOutputFocused"
+    },
+    {
+        "key": "ctrl+alt+m",
+        "command": "editor.action.refactor",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+k c",
+        "command": "composerMode.agent"
+    },
+    {
+        "key": "alt+k l",
+        "command": "composerMode.chat"
+    },
+    {
+        "key": "alt+k m",
+        "command": "composerMode.edit"
+    },
+    {
+        "key": "alt+home",
+        "command": "explorer.newFile"
+    },
+    {
+        "key": "alt+enter",
+        "command": "editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+k b",
+        "command": "composerMode.background"
+    },
+    {
+        "key": "alt+k n",
+        "command": "workbench.panel.aichat.47649ca9-8fcb-424b-862c-46b4fae00f2e"
+    },
+    {
+        "key": "alt+k a",
+        "command": "cursor.composer.openAgentWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout != 'agent'"
+    },
+    {
+        "key": "alt+k a",
+        "command": "cursor.composer.openEditorWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent'"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-cursor.composer.openAgentWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout != 'agent'"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-cursor.composer.openEditorWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent'"
     }
 ]

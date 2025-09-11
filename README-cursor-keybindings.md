@@ -60,19 +60,19 @@ To use these keybindings, just copy the download this [keybindings](https://raw.
 | `ctrl+alt+d` | Copy line down |
 | `ctrl+alt+v` | Refactor menu |
 | `alt+F12` | Toggle terminal |
+| `alt+Home`      | Create new file in current directory as editor        |
 
 ### Cursor-Specific Actions
 
-All Cursor actions are mapped under the `alt+k` chord to avoid conflicts:
+All Cursor actions are mapped under the `alt+k` chord to avoid conflicts with emacs:
 
-| Keybinding | Action |
-|------------|---------|
-| `alt+k k` | Generate code (opens in-editor window) |
-| `alt+k c` or `ctrl+i` | Open cursor composer in side window |
-| `alt+k i` or `ctrl+shift+i` | Open cursor composer in big window |
-| `alt+k alt+l` | Show chat history window |
-| `alt+k l` | Open/new chat window |
-| `alt+k y` | Copy selection to chat window |
+| Keybinding                  | Action                                                             |
+|-----------------------------|--------------------------------------------------------------------|
+| `alt+k k`                   | Generate code (opens in-editor window) Cursor calls this Command K |
+| `alt+k c` or `ctrl+i`       | Open 'Agent' in chat side window                                   |
+| `alt+k l`                   | Open 'Ask' in chat side window                                     |
+| `alt+k y`                   | Copy selection to 'Ask' chat side window                           |
+| `alt+k c`                   | Copy selection to 'Agent' chat side window                         |
 
 ### Additional VSCode/IntelliJ Shortcuts
 
@@ -105,4 +105,19 @@ gsettings set org.freedesktop.ibus.panel.emoji hotkey "[]"
     - `alt+l` (Transform to lowercase) from Awesome Emacs keymap
    
 4. It seems a recent cursor update overrides the mapping of `ctrl+k` again.  Cursor wants to use it for aipopup.action.modal.generate.  We use `alt+k k` for this instead.  So we now have an explicit mapping to disable the cursor mapping of ctrl+k to aipopup.action.modal.generate.
+5. Apparently, it is not possible to map the keyboard to navigate to the next reference to a keystroke like ctrl-alt-n and also map this same keystroke to find next search result.  This is possible in IntelliJ IDEA.  If you try to map it this way, it will work ONLY if you first clear prior references found before doing a search.  Very goofy.  So the workaround is to first hit ctrl-alt-m to clear any prior references search result before hitting ctrl-alt-n to find next search result.  crazy, but it sorta works I guess
+6. 
 
+## Update 2024-12-7
+Cursor update trashes keyboard settings for emacs users. Emacs users use ctrl-k is for emacs kill line, and not a cursor action.
+These keymaps have been updated to fix this
+
+## Updates 2025-2-24
+cursor 0.46 Changed the way the chat, composer,and agent works.  `alt+k l ` now maps to 'ask' and `alt+k c` maps to 'agent' in the chat window.  Apparently composer is not a thing anymore.
+
+## Update 2025-3-2
+Cursor version 0.46  rearranges composer keystrokes and again breaks keystrokes for emacs keymap users.
+This version of cursor maps `ctrl+y`  to 'Cursor: Focus Chat Followup'. 
+
+## Updates 2025-9-11
+Cursor 1.6.6 update.  Cursor arbitrarily decides to map `ctrl+e` to 'Open Agent Window' and 'Open Editor Window'.  Of course, this breaks Emacs-MCX: Move End Of Line.  We now remap this action to `alt+k a`
