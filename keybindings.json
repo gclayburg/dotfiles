@@ -287,10 +287,6 @@
         "when": "config.emacs-mcx.emacsLikeTab && editorTextFocus && !editorHoverFocused && !editorParameterHintsVisible && !editorReadonly && !editorTabCompletion && !editorTabMovesFocus && !inSnippetMode && !inlineSuggestionVisible && !suggestWidgetVisible"
     },
     {
-        "key": "alt+k g",
-        "command": "workbench.action.chat.open"
-    },
-    {
         "key": "ctrl+alt+i",
         "command": "-workbench.action.chat.open"
     },
@@ -443,10 +439,6 @@
         "command": "composerMode.chat"
     },
     {
-        "key": "alt+k m",
-        "command": "composerMode.edit"
-    },
-    {
         "key": "alt+home",
         "command": "explorer.newFile"
     },
@@ -458,10 +450,6 @@
     {
         "key": "alt+k b",
         "command": "composerMode.background"
-    },
-    {
-        "key": "alt+k n",
-        "command": "workbench.panel.aichat.47649ca9-8fcb-424b-862c-46b4fae00f2e"
     },
     {
         "key": "alt+k a",
