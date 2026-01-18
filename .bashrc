@@ -491,6 +491,9 @@ if [ "$PS1" ]; then
       CYGWIN)
         HOSTCOLOR=${B_CYAN}
         ;;
+      Darwin)
+        HOSTCOLOR=${B_BLUE_ON_WHITE}
+        ;;
       *)
         HOSTCOLOR=${B_DARK_GRAY}
         ;;
