@@ -492,7 +492,7 @@ if [ "$PS1" ]; then
         HOSTCOLOR=${B_CYAN}
         ;;
       Darwin)
-        HOSTCOLOR=${B_BLUE_ON_WHITE}
+        HOSTCOLOR=${BLUE_ON_WHITE}
         ;;
       *)
         HOSTCOLOR=${B_DARK_GRAY}
