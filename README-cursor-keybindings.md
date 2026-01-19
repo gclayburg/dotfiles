@@ -64,20 +64,23 @@ All Cursor actions are mapped under the `alt+k` chord to avoid conflicts with em
 
 ### Code/Refactoring
 
-| Keybinding        | Action                                                      |
-|-------------------|-------------------------------------------------------------|
-| `ctrl+.`          | Navigate to definition                                      |
-| `ctrl+,`          | Navigate back                                               |
-| `ctrl+/`          | Navigate forward                                            |
-| `ctrl+c ctrl+c`   | Comment line                                                |
-| `ctrl+q`          | Show hover (similar to IntelliJ quick documentation)       |
-| `shift+F6`        | Rename symbol                                               |
-| `ctrl+alt+l`      | Format document (matches IntelliJ reformat)                |
-| `ctrl+alt+i`      | Format line                                                 |
-| `ctrl+alt+d`      | Copy line down                                              |
-| `ctrl+alt+v`      | Refactor menu                                               |
-| `alt+F12`         | Toggle terminal                                             |
-| `alt+Home`        | Create new file in current directory as editor             |
+| Keybinding        | Action                                                      | command                                    | when                                                                                                             |
+|-------------------|-------------------------------------------------------------|--------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `ctrl+.`          | Navigate to definition                                      | editor.action.revealDefinition             | editorHasDefinitionProvider && editorTextFocus                                                                   |
+| `ctrl+,`          | Navigate back                                               | workbench.action.navigateBack              | canNavigateBack                                                                                                  |
+| `ctrl+/`          | Navigate forward                                            | workbench.action.navigateForward           | canNavigateForward                                                                                               |
+| `ctrl+c ctrl+c`   | Comment line                                                | editor.action.commentLine                  | editorTextFocus && !editorReadonly                                                                               |
+| `ctrl+q`          | Show hover (similar to IntelliJ quick documentation)        | editor.action.showHover                    | editorTextFocus                                                                                                  |
+| `shift+F6`        | Rename symbol                                               | editor.action.rename                       | editorHasRenameProvider && editorTextFocus && !editorReadonly                                                    |
+|                   |                                                             | debug.renameWatchExpression                | watchExpressionsFocused                                                                                          |
+|                   |                                                             | renameFile                                 | filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus  |
+| `ctrl+alt+l`      | Format document (matches IntelliJ reformat)                 | editor.action.formatDocument.none          | editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly                                       |
+|                   |                                                             | editor.action.formatDocument               | editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor                  |
+| `ctrl+alt+i`      | Format selection                                            | editor.action.formatSelection              | editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly                               |
+| `ctrl+alt+d`      | Copy line down                                              | editor.action.copyLinesDownAction          | editorTextFocus && !editorReadonly                                                                               |
+| `ctrl+alt+v`      | Refactor menu                                               | editor.action.refactor                     | editorHasCodeActionsProvider && textInputFocus && !editorReadonly                                                |
+| `alt+F12`         | Toggle terminal                                             | workbench.action.terminal.toggleTerminal   | terminal.active                                                                                                  |
+| `alt+Home`        | Create new file in current directory as editor              | explorer.newFile                           |                                                                                                                  |
 
 ### Additional VSCode/IntelliJ Shortcuts
 
