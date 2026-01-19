@@ -152,6 +152,10 @@ case "$(uname -s | cut -d_ -f1)" in
       fi
     fi
     ;;
+  Darwin)
+    #ok MACOS, we know you like zsh. We don't need to hear about it on each new shell startup.
+    export BASH_SILENCE_DEPRECATION_WARNING=1
+    ;;
   HP-UX) 
     # enter HP-UX specific .profile settings here
     ;;

@@ -14,3 +14,6 @@ if [ "`uname -s | cut -d. -f1`" != "CYGWIN_NT-5" ]; then
 fi
 [ -s "$HOME/.local/share/JetBrains/Toolbox/scripts" ] && export PATH="$PATH:$HOME/.local/share/JetBrains/Toolbox/scripts"
 #echo "exit .bash_login"
+
+#on macos, a new terminal will start a login interactive shell.  We want to make sure that last command on startup always has an exist status of 0 (true)
+true
