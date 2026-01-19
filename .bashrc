@@ -551,8 +551,8 @@ if [ "$PS1" ]; then
     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]]; then
        DMI_SYS_VENDOR=$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "
     fi
-    #display identities held by ssh-agent for this session
-    local p_sshagentkeys=$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr '\n' ' ')
+    #display identities held by ssh-agent for this session (evaluated at each prompt needed for macOS timing on terminal window startup)
+    local p_sshagentkeys='$(ssh-add -l 2> /dev/null | cut -d\( -f2 | cut -d\) -f1 | tr "\n" " ")'
 
     local base_prompt='\n'
     base_prompt=${base_prompt}${p_exit_status}
