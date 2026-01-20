@@ -1,0 +1,80 @@
+---
+description: Rules for updating keybindings documentation in this dotfiles project
+globs: ["keybindings.json", "README-cursor-keybindings.md"]
+---
+
+# Cursor Rules for dotfiles-universal
+
+This project contains custom keybindings for Cursor IDE that preserve Emacs keybindings while adding IntelliJ-like shortcuts.
+
+## Updating the Keybindings Documentation
+
+When asked to update the `README-cursor-keybindings.md` file based on `keybindings.json`, follow this procedure:
+
+### Step 1: Read Both Files
+- Read the complete `keybindings.json` file
+- Read the complete `README-cursor-keybindings.md` file
+
+### Step 2: Update Each Table
+For each table in the README that has `command` and `when` columns:
+
+1. **Only include POSITIVE bindings** - Commands that do NOT start with `-` (minus sign)
+   - Positive: `"command": "editor.action.rename"` ✓
+   - Negative: `"command": "-editor.action.rename"` ✗ (skip unless in "Other keymaps modified" section)
+
+2. **Skip duplicate entries** - If the same command appears twice with the same when clause, include it only once
+
+3. **Use full names** - Do not abbreviate the `when` column values
+
+4. **Multiple commands per keybinding** - When a keybinding has multiple commands (different `when` contexts), add additional rows with empty Keybinding and Action columns:
+
+   ```
+   | `shift+F6` | Rename symbol | editor.action.rename | editorHasRenameProvider && editorTextFocus && !editorReadonly |
+   |            |               | debug.renameWatchExpression | watchExpressionsFocused |
+   |            |               | renameFile | filesExplorerFocus && foldersViewVisible && ... |
+   ```
+
+5. **Escape pipe characters** - In the `when` column, escape `||` as `\|\|` for proper markdown table rendering
+
+### Step 3: Check for Undocumented Keybindings
+After updating all tables, scan `keybindings.json` for any positive keybindings that are NOT documented in the README. Report these to the user.
+
+### Table Sections Reference
+
+The README contains these table sections:
+- **Cursor-Specific Actions** - `alt+k` chord keybindings for Cursor AI features
+- **Window Management** - Window splitting, file navigation, sidebar toggles
+- **Search/Find** - Multi-cursor, find references, search navigation
+- **Selection** - Expand/shrink selection, move lines, tab navigation
+- **Code/Refactoring** - Go to definition, rename, format, refactor
+- **Additional VSCode/IntelliJ Shortcuts** - Quick fix, problem navigation, test running
+- **Other keymaps modified** - Disabled/remapped default keybindings (includes negative bindings)
+
+### Example Keybinding Entry in JSON
+
+```json
+{
+    "key": "shift+f6",
+    "command": "editor.action.rename",
+    "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+}
+```
+
+Becomes this table row:
+
+```
+| `shift+F6` | Rename symbol | editor.action.rename | editorHasRenameProvider && editorTextFocus && !editorReadonly |
+```
+
+## File Descriptions
+
+- `keybindings.json` - The actual keybinding definitions to install in Cursor
+- `README-cursor-keybindings.md` - Human-readable documentation of the keybindings
+- `keybindings-old.json` - Archive of previous keybinding versions
+
+## Installation Location
+
+Users should copy `keybindings.json` to:
+- Linux: `~/.config/Cursor/User/keybindings.json`
+- macOS: `~/Library/Application Support/Cursor/User/keybindings.json`
+- Windows: `%APPDATA%\Cursor\User\keybindings.json`
