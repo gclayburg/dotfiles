@@ -386,10 +386,6 @@
         "command": "references-view.clear"
     },
     {
-        "key": "ctrl+shift+alt+w",
-        "command": "workbench.action.openGlobalKeybindings"
-    },
-    {
         "key": "ctrl+alt+n",
         "command": "list.focusAnyDown",
         "when": "listFocus && !inputFocus && !treestickyScrollFocused"
@@ -470,5 +466,24 @@
         "key": "ctrl+e",
         "command": "-cursor.composer.openEditorWindow",
         "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent'"
+    },
+    {
+        "key": "alt+k o",
+        "command": "workbench.action.toggleAuxiliaryBar"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-cursorai.action.generateInTerminal",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported || terminalHasBeenCreated && terminalPromptBarVisible || terminalProcessSupported && terminalPromptBarVisible"
+    },
+    {
+        "key": "alt+f11",
+        "command": "workbench.action.toggleZenMode",
+        "when": "!isAuxiliaryWindowFocusedContext && !terminalFocus"
+    },
+    {
+        "key": "alt+k i",
+        "command": "workbench.action.toggleSidebarVisibility",
+        "when": "config.emacs-mcx.useMetaPrefixAlt"
     }
 ]
