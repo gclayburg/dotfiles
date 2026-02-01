@@ -662,3 +662,16 @@ if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
 elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
   source ${RUNDIR}/.bashrc.localhost
 fi
+
+# new linux user account dev setup
+# SDKMAN
+#  curl -s "https://get.sdkman.io" | bash
+#  sdk install java 17.0.18-tem
+# NVM
+#  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+#  nvm install --lts
+# fzf  https://github.com/junegunn/fzf
+#   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+#   ~/.fzf/install
+# claude code
+#   curl -fsSL https://claude.ai/install.sh | bash
