@@ -675,3 +675,8 @@ fi
 #   ~/.fzf/install
 # claude code
 #   curl -fsSL https://claude.ai/install.sh | bash
+
+# pyenv
+#   curl https://pyenv.run | bash
+# OR
+#   brew install pyenv
