@@ -629,6 +629,41 @@ function loadfzfextras {
     fi
   }
 
+  function dse() {
+    if ! docker --version > /dev/null 2>&1; then
+      echo "docker not installed"
+      return 1
+    fi
+    if ! docker sandbox ls > /dev/null 2>&1; then
+      echo "docker sandbox not available (Docker Sandboxes feature)"
+      return 1
+    fi
+    # Select a Docker Sandbox (microVM from docker sandbox ls) and exec into bash.
+    # Full table shows STATUS (running/stopped); parse SANDBOX name (col 1) from selection for exec.
+    # See https://docs.docker.com/ai/sandboxes/
+    local name
+    name=$(docker sandbox ls | sed 1d | fzf -q "$1" | awk '{print $1}')
+    if [ -n "$name" ]; then
+      echo "docker sandbox exec -it --detach-keys='ctrl-z,ctrl-z' $name /bin/bash"
+      if ! docker sandbox exec -it --detach-keys='ctrl-z,ctrl-z' "$name" /bin/bash; then
+        echo "docker sandbox exec -it --detach-keys='ctrl-z,ctrl-z' $name /bin/sh"
+        docker sandbox exec -it --detach-keys='ctrl-z,ctrl-z' "$name" /bin/sh
+      fi
+    fi
+  }
+
+  function cw() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      echo "cw: not in a git repository"
+      return 1
+    fi
+    local dir
+    dir=$(git worktree list | fzf -q "$1" | awk '{print $1}')
+    if [ -n "$dir" ]; then
+      cd "$dir"
+    fi
+  }
+
   # use forgit for interactive git
   # https://github.com/wfxr/forgit
   [ -f ${RUNDIR}/dev/forgit/forgit.plugin.sh ] && source ${RUNDIR}/dev/forgit/forgit.plugin.sh
@@ -655,8 +690,7 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"  #source the cargo/rust env if installed
 
-#localhost overrides
-UNQUALIFIED_HOSTNAME=$(echo "$HOSTNAME" | cut -d. -f1)
+# localhost overrides (interactive only; host-specific env is in .env.* above)
 if [[ -f ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME} ]]; then
   source ${RUNDIR}/.bashrc.${UNQUALIFIED_HOSTNAME}
 elif [[ -f ${RUNDIR}/.bashrc.localhost ]]; then
