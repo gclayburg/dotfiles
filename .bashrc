@@ -530,8 +530,10 @@ if [ "$PS1" ]; then
 
     # Git branch: computed once per prompt in refresh_git_branch_for_prompt (PROMPT_COMMAND).
     # PS1 embeds ${GIT_BRANCH_PS1}; export GIT_BRANCH for scripts (see gitbranchname.txt pattern).
+    # SIGNALBOOT_TAG mirrors GIT_BRANCH for existing tooling; refreshed in the same function.
     export GIT_BRANCH=""
     export GIT_BRANCH_PS1=""
+    export SIGNALBOOT_TAG=""
     export _DOTFILES_GIT_MODE=0
     unset _DOTFILES_GIT_INLINE_BLUE _DOTFILES_GIT_INLINE_OFF 2>/dev/null
     local p_gitbranch=""
@@ -611,8 +613,8 @@ if [ "$PS1" ]; then
     alias dash="PS1='\$0 $USER@$HOSTNAME \$ ' dash"  # use very minimal prompt for sh subshells
   }
 
-  # Single git branch probe per prompt (after history flush). Updates GIT_BRANCH, GIT_BRANCH_PS1;
-  # PS1 uses ${GIT_BRANCH_PS1}, so branch text and env stay in sync after cd, checkout, etc.
+  # Single git branch probe per prompt (after history flush). Updates GIT_BRANCH, GIT_BRANCH_PS1,
+  # and SIGNALBOOT_TAG (= GIT_BRANCH); PS1 uses ${GIT_BRANCH_PS1}.
   refresh_git_branch_for_prompt() {
     case "${_DOTFILES_GIT_MODE:-0}" in
       0)
@@ -636,7 +638,8 @@ if [ "$PS1" ]; then
         fi
         ;;
     esac
-    export GIT_BRANCH GIT_BRANCH_PS1
+    SIGNALBOOT_TAG="${GIT_BRANCH}"
+    export GIT_BRANCH GIT_BRANCH_PS1 SIGNALBOOT_TAG
   }
 
   export PROMPT_COMMAND='history -a; refresh_git_branch_for_prompt'
