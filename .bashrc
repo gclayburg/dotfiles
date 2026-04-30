@@ -528,21 +528,39 @@ if [ "$PS1" ]; then
     # show directory stack in green, as long as PS1 is being evaluated by bash
     local p_dirstack=" ${GREEN}"'$(if [ -n ${BASH_VERSION} ]; then echo ${DIRSTACK[@]:1}; else echo ""; fi)'
 
-    # " (master)", when in git master branch
+    # Git branch: computed once per prompt in refresh_git_branch_for_prompt (PROMPT_COMMAND).
+    # PS1 embeds ${GIT_BRANCH_PS1}; export GIT_BRANCH for scripts (see gitbranchname.txt pattern).
+    export GIT_BRANCH=""
+    export GIT_BRANCH_PS1=""
+    export _DOTFILES_GIT_MODE=0
+    unset _DOTFILES_GIT_INLINE_BLUE _DOTFILES_GIT_INLINE_OFF 2>/dev/null
     local p_gitbranch=""
     if git --version > /dev/null 2>&1 ; then
-      #only evaluate git branch info if git is installed on this box
-      #without this check, prompt rendering will slow down on boxes like ubuntu that spit out verbose info if git is not installed
+      # Only load git prompt helpers if git is installed (avoids slow/failed probes on hosts without git).
       if [[ -e /etc/bash_completion.d/git-prompt ]]; then
         . /etc/bash_completion.d/git-prompt
-        p_gitbranch='$(declare -F __git_ps1 &>/dev/null && __git_ps1 "[%s]")'
+        if declare -F __git_ps1 &>/dev/null; then
+          export _DOTFILES_GIT_MODE=1
+        else
+          export _DOTFILES_GIT_MODE=2
+        fi
       elif [[ -e /etc/bash_completion.d/git ]]; then
         . /etc/bash_completion.d/git
-        p_gitbranch='$(declare -F __git_ps1 &>/dev/null && __git_ps1 "[%s]")'
+        if declare -F __git_ps1 &>/dev/null; then
+          export _DOTFILES_GIT_MODE=1
+        else
+          export _DOTFILES_GIT_MODE=2
+        fi
       else
-        #git completion not installed on this box. use this inline method instead to show git branch
-        p_gitbranch="${BLUE_ON_WHITE}"'$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/(\1)/" )'
+        export _DOTFILES_GIT_MODE=2
       fi
+      if [[ "${_DOTFILES_GIT_MODE}" == "2" ]]; then
+        # Must be real ESC bytes, not the two-char sequence \e. PS1 only decodes \e when it appears
+        # in the PS1 template itself; values expanded from ${GIT_BRANCH_PS1} are not re-parsed.
+        export _DOTFILES_GIT_INLINE_BLUE=$'\e[47;1;34m'
+        export _DOTFILES_GIT_INLINE_OFF=$'\e[0m'
+      fi
+      p_gitbranch='${GIT_BRANCH_PS1}'
     fi
 
     local p_ending="${OFF}"'\n\$ '
@@ -592,7 +610,36 @@ if [ "$PS1" ]; then
     alias sh="PS1='\$0 $USER@$HOSTNAME \$ ' sh"  # use very minimal prompt for sh subshells
     alias dash="PS1='\$0 $USER@$HOSTNAME \$ ' dash"  # use very minimal prompt for sh subshells
   }
-  export PROMPT_COMMAND='history -a'
+
+  # Single git branch probe per prompt (after history flush). Updates GIT_BRANCH, GIT_BRANCH_PS1;
+  # PS1 uses ${GIT_BRANCH_PS1}, so branch text and env stay in sync after cd, checkout, etc.
+  refresh_git_branch_for_prompt() {
+    case "${_DOTFILES_GIT_MODE:-0}" in
+      0)
+        GIT_BRANCH=""
+        GIT_BRANCH_PS1=""
+        ;;
+      1)
+        GIT_BRANCH="$(__git_ps1 "%s" 2>/dev/null)"
+        if [[ -n "${GIT_BRANCH}" ]]; then
+          GIT_BRANCH_PS1="[${GIT_BRANCH}]"
+        else
+          GIT_BRANCH_PS1=""
+        fi
+        ;;
+      2)
+        GIT_BRANCH="$(git branch 2> /dev/null | sed -e "/^[^*]/d" -e "s/* \(.*\)/\1/" )"
+        if [[ -n "${GIT_BRANCH}" ]]; then
+          GIT_BRANCH_PS1="${_DOTFILES_GIT_INLINE_BLUE}(${GIT_BRANCH})${_DOTFILES_GIT_INLINE_OFF}"
+        else
+          GIT_BRANCH_PS1=""
+        fi
+        ;;
+    esac
+    export GIT_BRANCH GIT_BRANCH_PS1
+  }
+
+  export PROMPT_COMMAND='history -a; refresh_git_branch_for_prompt'
   setPrompt
   unset -f setPrompt
 fi # if $PS1
