@@ -709,8 +709,8 @@ function loadfzfextras {
     fi
     local dir
 
-    if [[ -x "$HOME/bin/git-worktree-aug.sh" ]]; then
-      dir=$("$HOME/bin/git-worktree-aug.sh" -w | fzf -q "$1" | awk '{print $1}')
+    if [[ -x "$HOME/bin/gitw" ]]; then
+      dir=$("$HOME/bin/gitw" -w | fzf -q "$1" | awk '{print $1}')
       if [ -n "$dir" ]; then
         cd "$dir"
       fi
