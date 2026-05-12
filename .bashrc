@@ -710,7 +710,7 @@ function loadfzfextras {
     local dir
 
     if [[ -x "$HOME/bin/gitw" ]]; then
-      dir=$("$HOME/bin/gitw" -w | fzf -q "$1" | awk '{print $1}')
+      dir=$("$HOME/bin/gitw" -w | fzf --tac --no-sort -q "$1" | awk '{print $1}')
       if [ -n "$dir" ]; then
         cd "$dir"
       fi
